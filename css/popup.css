@@ -1,0 +1,169 @@
+* {
+  margin: 0;
+  padding: 0;
+  /* color: white; */
+  font-family: 'HakgyoansimWoojuR';
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+button{
+  border : none;
+  background : transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dfdedd;
+  border: 2px solid #ffffff;
+  border-radius: 12px 12px 12px 12px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #7c9fd8;
+}
+
+body {
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  border: none;
+  border-radius: 2px;
+  /*background-color: #e3f2ff;*/
+  /* background-color: #1a1a1a; */
+}
+
+li {
+  list-style: none;
+}
+
+
+h4 {
+  width : 170px ;
+  font-size: 15px;
+  border-radius: 10px;
+  padding: 3px 17px;
+  border: 1.2px solid #8b8888;
+  opacity: 0.5;
+  margin: 30px 10px 10px 37px;
+  cursor: default;
+  color: #8b8888;
+}
+
+h3 {
+  width: 207px;
+  padding: 15px 10px 7px 13px;
+  font-size: 15px;
+  line-height: 19px;
+}
+
+h2 {
+  position: relative;
+  top: 7px;
+  margin: 0px 10px 0px 0px;
+  font-size: 20px;
+}
+
+h1 {
+  padding: 5px 5px 0px 5px;
+  margin: 20px 5px 0px 20px;
+  font-size: 30px;
+  cursor: default;
+  /* color: #ffffff; */
+  color: rgb(0, 0, 0)
+}
+
+a {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+}
+
+
+.window {
+  width: 790px;
+  overflow: hidden;
+}
+
+.main {
+  width: 790px;
+  min-height: 700px;
+  overflow-x: hidden;
+}
+
+.slider_wrapper > button{
+  background:#8b8888;
+  opacity : 0.5;
+  border-radius: 10px;
+  z-index : 99;
+  top : 90px;
+}
+
+.content_row{
+  display : flex;
+  padding : 7px 15px;
+  border-bottom: 1px solid #e9e6e6;
+}
+
+.content_row .card{
+  width : 230px;
+  min-height: 253px;
+  margin : 3px 10px;
+}
+
+.card h3 {
+  color: black;
+}
+
+.thumbnail {
+  width: 197px;
+  height: 111px;
+}
+
+.contents {
+  overflow: hidden;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding: 3px 7px 25px 7px;
+  position: relative;
+  left: 15px;
+  width: 750px;
+  /*background :rgba(248, 246, 246, 0.767);*/
+  border-bottom: 1px solid #cfd1d1
+}
+
+
+.card > a > img {
+  width: 230px;
+  height: 150px;
+  border-radius: 5px 5px 0px 0px;
+}
+
+
+button:hover {
+  cursor:pointer;
+  opacity : 1;
+}
+
+.title {
+  position: relative;
+  margin : 5px 0px 0px 15px;
+  border-bottom: 1px solid #f5f1f1;
+}
+
+.title > img{
+  width: 50px;
+  height: 50px;
+}
+
+.title #myPageBtn{
+  position: absolute;
+  top: 17px;
+  right : 20px;
+  border : 1px solid #2d2d2d;
+  border-radius: 30px;
+}
+
+.btn_delete:hover{
+  opacity: 1;
+}
