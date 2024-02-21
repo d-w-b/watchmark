@@ -110,8 +110,8 @@ function createCard(img,   //카드 썸네일로 보여질 이미지
 
   BTN_DELETE_CSS = {
     position : 'absolute',
-    top: '2px',
-    right: '3px',
+    top: '7px',
+    right: '0px',
     width: "15px",
     height: "15px",
     border : 'none',

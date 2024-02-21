@@ -15,7 +15,7 @@ function init() {
 
         mark_youvid = result['mark_youvid']  // vid 리스트
 
-        const container = document.body.querySelector('.contents-container')
+        const container = document.body.querySelector('.mark_youtube_video')
         if( mark_youvid.length ){
           //영상 정보 요청  vid -> ( thumbnail, title, vid )
           fetch("http://43.201.187.250:8000/video_info/videos?vid="+ mark_youvid.toString(), {
@@ -38,7 +38,7 @@ function init() {
   })
 
   // mypage EventListeners
-  document.getElementById('myPageBtn').addEventListener('click', btnmypageClickEventHandler)
+  document.getElementsByClassName('btn_tab').addEventListener('click', btnmypageClickEventHandler)
 
 }
 
@@ -84,7 +84,7 @@ function renderItems(container , items, numColumn) {
 
     // Youtube data api 로부터 받아온 데이터
     let title = item.snippet.title
-    let thumbnail = item.snippet.thumbnails.high.url
+    let thumbnail = item.snippet.thumbnails.maxres.url
 
     //카드 생성
     card = createCard(
