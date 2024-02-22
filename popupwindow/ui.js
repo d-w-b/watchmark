@@ -1,9 +1,4 @@
-// 요소에 CSS 속성을 부여하는 함수
-function setStyle(element, props){
-  Object.assign(element.style, props)
-  return element
-}
-/********************************************************************************/
+
 //a 태그 생성 
 function createAnchor ( href, className, clickEventHandler ){
     a = document.createElement('a')
@@ -21,7 +16,7 @@ function createImg( src , alt, className ){
   img = document.createElement('img')
   img.src = src
   img.alt = alt
-  if(className) { img.className = "thumbnail" }
+  if(className) { img.className = className }
 
   return img
 }
@@ -56,11 +51,10 @@ function createButton(img, eventHandler, className){
   return btn
 }
 /******************************** 사용자 정의 컴포넌트 *********************************/
-//순서 바꾸기 버튼 생성
-function createSwapButton(imgStyle, btnStyle){
+// 순서 바꾸기 버튼 생성
+function createSwapButton(){
   // 버튼 이미지 생성
-  img = createImg('icons/check_box_black.png', '순서 변환 버튼',null)
-  img = setStyle(img, imgStyle)
+  img = createImg('icons/check_box_black.png', '순서 변환 버튼','btn_swap_img')
 
   btnSwap = createButton(
     img,
@@ -68,16 +62,13 @@ function createSwapButton(imgStyle, btnStyle){
     'btn_swap'
   )
 
-  btnSwap = setStyle(btn,btnStyle)
-
   return btnSwap
 }
 
-//삭제 버튼 생성
-function createDeleteButton(imgStyle, btnStyle){
+// 삭제 버튼 생성
+function createDeleteButton(){
   // 버튼 이미지 생성
-  img = createImg('icons/delete_black.png', '순서 변환 버튼',null)
-  img = setStyle(img, imgStyle)
+  img = createImg('icons/delete_black.png', '순서 변환 버튼', 'btn_delete_img')
 
   btnDelete = createButton(
     img,
@@ -85,12 +76,10 @@ function createDeleteButton(imgStyle, btnStyle){
     'btn_delete'
   )
 
-  btnSwap = setStyle(btn,btnStyle)
-
-  return btnSwap
+  return btnDelete
 }
 
-//카드 컴포넌트 생성
+// 카드 컴포넌트 생성
 function createCard(img,   //카드 썸네일로 보여질 이미지
                     anchor,//카드 클릭시 페이지 이동을 위한 anchor
                     title, //카드 제목으로 보여질 텍스트
@@ -98,45 +87,16 @@ function createCard(img,   //카드 썸네일로 보여질 이미지
 
   card = createDiv("card", id)
 
-  //카드 내에서 보여질 제목
+  // 카드 내에서 보여질 제목
   txt = document.createElement('h3')
   txt.innerText = title
 
-  //적용할 CSS
-  BTN_DELETE_IMG_CSS ={
-    width: "15px",
-    height: "15px"
-  }
 
-  BTN_DELETE_CSS = {
-    position : 'absolute',
-    top: '7px',
-    right: '0px',
-    width: "15px",
-    height: "15px",
-    border : 'none',
-    background : '#fefefe',
-    'border-radius': '19px',  
-    transition : 'all 0.7s'
-  }
-
-  BTN_SWAP_IMG_CSS ={
-    width: "17px",
-    height: "17px",
-    "border-radius" : "19px"
-  }
-
-  BTN_SWAP_CSS = {
-    position: "absolute",
-    width: "17px",
-    height: "17px",
-    bottom : "0px",
-    right : "2px"
-  }
-
-  //카드에 추가할 버튼 생성
-  btnDelete = createDeleteButton(BTN_DELETE_IMG_CSS,BTN_DELETE_CSS)
-  btnSwap = createSwapButton(BTN_SWAP_IMG_CSS, BTN_SWAP_CSS)
+  btnWrapper = createDiv("arrange", null)
+  // 카드에 추가할 버튼 생성
+  btnDelete = createDeleteButton()
+  btnSwap = createSwapButton()
+  btnWrapper.append(btnDelete, btnSwap)
 
   //append
   anchor.append(
@@ -145,8 +105,7 @@ function createCard(img,   //카드 썸네일로 보여질 이미지
   )
   card.append(
     anchor,
-    btnDelete,
-    btnSwap
+    btnWrapper
   )
 
   return card
@@ -159,7 +118,7 @@ function onClickCard(e){
   );
 }
 
-//리스트에서 삭제 버튼 클릭 이벤트
+// 삭제 버튼 클릭 이벤트
 function onClickDelete(e){
 
   // mark_youvid 불러오기
@@ -169,7 +128,8 @@ function onClickDelete(e){
     vid = parentNode.dataset.id
     vidList = result['mark_youvid']
 
-    //인덱스를 찾은 후 리스트에서 해당 인덱스 아이템 제거
+    // Update Model
+    // 인덱스를 찾은 후 리스트에서 해당 인덱스 아이템 제거
     idx = vidList.indexOf(vid)
     vidList.splice(idx,1)
     state.items.splice(idx,1)
@@ -177,17 +137,17 @@ function onClickDelete(e){
     chrome.storage.sync.set({
       mark_youvid : vidList
     }).then( () =>{
-        const container = document.body.querySelector('.contents-container')
-        //기존에 있던 하위 요소들 모두 삭제
-        var last;
-        while (last = container.lastChild) container.removeChild(last);
-
-        //다시 렌더링
-        renderItems( container , state.items, 3 )
+      // Update View
+        if(e.target.closest('.content_row').childElementCount == 1){
+          e.target.closest('.content_row').remove()
+        }else{
+          e.target.closest('.card').remove()
+        }
       })
   })
 }
-//리스트에서 순서 변경 버튼 클릭 이벤트
+
+// 순서 변경 버튼 클릭 이벤트
 function onClickSwap(e){
   console.log(state.temp)
   getStorage(['mark_youvid']).then(result=>{
@@ -201,18 +161,18 @@ function onClickSwap(e){
     }else{
       let idx1 = a.indexOf(pNode.dataset.id)
       let idx2 = a.indexOf(state.temp.dataset.id)
-      
+
+      // Update View
+      state.temp.querySelector('.btn_swap > img').src = 'icons/check_box_black.png'
       let dummy = document.createElement("span")
       state.temp.before(dummy)
       pNode.before(state.temp)
       dummy.replaceWith(pNode)
-
-      //이전에 클릭된 버튼 이미지 변경
-      state.temp.querySelector('.btn_swap > img').src = 'icons/check_box_black.png'
-      //초기화
+      
+      // Update Model
       state.temp = undefined
-
       swap(a, idx1, idx2)
+      swap(state.items, idx1, idx2)
       chrome.storage.sync.set({mark_youvid : a})
     }
   })

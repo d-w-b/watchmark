@@ -10,8 +10,8 @@ state.items = []
 // init
 function init() {
   //저장된 데이터 불러오기
-  chrome.storage.sync.get([
-    'mark_youvid'], function (result) {
+  chrome.storage.sync.get(
+    ['mark_youvid'], function (result) {
 
         mark_youvid = result['mark_youvid']  // vid 리스트
 
@@ -28,7 +28,7 @@ function init() {
             // state에 items 저장
             state.items = [...res.items]
             
-            renderItems( container , res.items, 3 )
+            renderItems( container , res.items, 1 )
           })
         }else{
           const youvidGreetings = document.createElement('h4')
@@ -38,7 +38,9 @@ function init() {
   })
 
   // mypage EventListeners
-  document.getElementsByClassName('btn_tab').addEventListener('click', btnmypageClickEventHandler)
+  document.querySelectorAll('.btn_tab').forEach((e =>{
+    e.addEventListener('click', btnmypageClickEventHandler)
+  }))
 
 }
 
