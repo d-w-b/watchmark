@@ -18,7 +18,7 @@ function init() {
         const container = document.body.querySelector('.mark_youtube_video')
         if( mark_youvid.length ){
           //영상 정보 요청  vid -> ( thumbnail, title, vid )
-          fetch("http://43.201.187.250:8000/video_info/videos?vid="+ mark_youvid.toString(), {
+          fetch("http://43.201.187.250:8000/api/id="+ mark_youvid.toString(), {
             method: 'GET',
           }).then(res => {
             console.log(res)
@@ -82,6 +82,8 @@ function renderItems(container , items, numColumn) {
     //3개씩 끊기
     if (state.count % numColumn == 0){
       var row = createDiv('content_row', null)
+      row.classList.add('handover')
+      row.classList.add('handover_gray')
     }
 
     // Youtube data api 로부터 받아온 데이터
