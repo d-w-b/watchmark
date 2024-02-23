@@ -1,5 +1,5 @@
 
-//a 태그 생성 
+//a 요소 생성 
 function createAnchor ( href, className, clickEventHandler ){
     a = document.createElement('a')
     if(className) { a.className = className }
@@ -11,7 +11,7 @@ function createAnchor ( href, className, clickEventHandler ){
     return a
   }
   
-//img 태그 생성 
+//img 요소 생성 
 function createImg( src , alt, className ){
   img = document.createElement('img')
   img.src = src
@@ -21,7 +21,7 @@ function createImg( src , alt, className ){
   return img
 }
 
-//div 태그 생성
+//div 요소 생성
 function createDiv(className, id){
   wrapper = document.createElement('div')
   wrapper.style.position = 'relative'
@@ -31,7 +31,7 @@ function createDiv(className, id){
   return wrapper
 }
 
-//button 태그 생성
+//button 요소 생성
 function createButton(img, eventHandler, className){
   btn = document.createElement('button')
 
@@ -51,6 +51,21 @@ function createButton(img, eventHandler, className){
   return btn
 }
 /******************************** 사용자 정의 컴포넌트 *********************************/
+// 체크 박스 버튼 생성
+function createCheckBox(){
+  // 버튼 이미지 생성
+  img = createImg('icons/check_box_black.png', '선택 버튼','btn_check_img')
+
+  btnCheck = createButton(
+    img,
+    onClickDelete, 
+    'btn_check'
+  )
+
+  return btnCheck
+}
+
+
 // 순서 바꾸기 버튼 생성
 function createSwapButton(){
   // 버튼 이미지 생성
@@ -68,7 +83,7 @@ function createSwapButton(){
 // 삭제 버튼 생성
 function createDeleteButton(){
   // 버튼 이미지 생성
-  img = createImg('icons/delete_black.png', '순서 변환 버튼', 'btn_delete_img')
+  img = createImg('icons/delete_black.png', '삭제 버튼', 'btn_delete_img')
 
   btnDelete = createButton(
     img,
@@ -95,8 +110,7 @@ function createCard(img,   //카드 썸네일로 보여질 이미지
   btnWrapper = createDiv("arrange", null)
   // 카드에 추가할 버튼 생성
   btnDelete = createDeleteButton()
-  btnSwap = createSwapButton()
-  btnWrapper.append(btnDelete, btnSwap)
+  btnWrapper.append(btnDelete)
 
   //append
   anchor.append(

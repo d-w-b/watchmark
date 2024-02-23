@@ -103,6 +103,8 @@ function renderItems(container , items, numColumn) {
     container.appendChild(row)
     state.count++
   }
+
+  return container
 }
 
 function renderTab(index) {

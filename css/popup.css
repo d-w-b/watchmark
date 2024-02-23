@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   /* color: white; */
-  font-family: 'Noto Sans KR';
+  font-family: "Pretendard Variable", "Pretendard", "Inter",'Noto Sans KR';
 }
 
 ::-webkit-scrollbar {
@@ -78,11 +78,11 @@ a {
 }
 
 .handover{
-  transition : background-color 0.7s;
+  transition : background-color 0.3s;
 }
 
 .handover_gray:hover{
-  background-color:#ebebeb;
+  background-color:#f3f3f3;
 }
 
 
@@ -91,13 +91,20 @@ a {
   overflow: hidden;
 }
 
+.horizontal_center{
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+}
+
 .vertical_center{
   display: flex;
+  height: 100%;
   align-items:center;
 }
 
 .title {
-  background-color: #fffea7;
+  background-color: #ffde96;
   height: 40px;
   border-bottom: 1px solid #f5f1f1;
 }
@@ -110,13 +117,12 @@ a {
 .title > .btn_tab_wrapper{
   width: 90%;
   display : flex;
+  gap: 3px;
 }
 
 .title .btn_tab{
-  margin: 0px 3px;
-  width: 30px;
-  height: 30px;
-  border : 1px solid #2d2d2d;
+  width: 25px;
+  height: 25px;
   border-radius: 30px;
 }
 
@@ -139,7 +145,7 @@ a {
 
 .content_row .card{
   display: flex;
-  gap: 13px;
+  gap : 3px;
   width: 97%;
   margin : 0.5rem 0;
 }
@@ -149,12 +155,12 @@ a {
   align-items: center;
 }
 
-.btn_delete_img {
+.btn_check_img {
   width: 17px;
   height: 17px;
 }
 
-.btn_delete{
+.btn_check{
   width: 17px;
   height: 17px;
   border : none;
@@ -163,7 +169,7 @@ a {
   transition : all 0.7s;
 }
 
-.btn_swap_img {
+/* .btn_swap_img {
   width: 19px;
   height: 19px;
   border-radius : 19px;
@@ -175,12 +181,13 @@ a {
   height: 19px;
   bottom : 0px;
   right : 2px;
-}
+} */
 
 .card h3 {
   display:flex;
   align-items: center;
   max-height: 111px;
+  min-width: 225px;
   overflow: hidden;
   color: black;
 }
