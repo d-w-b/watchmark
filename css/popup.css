@@ -147,7 +147,7 @@ a {
   display: flex;
   gap : 3px;
   width: 97%;
-  margin : 0.5rem 0;
+  margin : 0.2rem 0;
 }
 
 .arrange {
@@ -187,14 +187,14 @@ a {
   display:flex;
   align-items: center;
   max-height: 111px;
-  min-width: 225px;
+  min-width: 245px;
   overflow: hidden;
   color: black;
 }
 
 .thumbnail {
-  width: 197px;
-  height: 111px;
+  width: 170px;
+  height: 100px;
 }
 
 .contents {
