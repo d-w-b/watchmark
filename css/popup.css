@@ -186,15 +186,15 @@ a {
 .card h3 {
   display:flex;
   align-items: center;
-  max-height: 111px;
-  min-width: 245px;
+  max-height: 85px;
+  min-width: 264px;
   overflow: hidden;
   color: black;
 }
 
 .thumbnail {
-  width: 170px;
-  height: 100px;
+  width: 155px;
+  height: 85px;
 }
 
 .contents {
