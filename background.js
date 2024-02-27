@@ -1,5 +1,17 @@
 /**** onInstalled 이벤트 리스너 ****/
-//chrome.runtime.onInstalled.addListener(() => {});
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.sync.get(['mark_youvid', 'mark_netflix', 'mark_x'], function(result){
+    if(!result['mark_youvid']){
+      chrome.storage.sync.set({mark_youvid : []})
+    }
+    if(!result['mark_netflix']){
+      chrome.storage.sync.set({mark_netflix : []})
+    }
+    if(!result['mark_x']){
+      chrome.storage.sync.set({mark_x : []})
+    }
+  })
+});
 
 /**** storage.onChanged 이벤트 리스너 ****/
 chrome.storage.onChanged.addListener(function (changes, namespace) {
@@ -41,9 +53,7 @@ chrome.tabs.onUpdated.addListener(
     if (changeInfo.status == "complete" && url.hostname.includes("www.youtube.com")) {
       chrome.scripting.executeScript({
         target: { tabId: id },
-        files: ["contentscripts/youtubeOnBrowse.js",
-                "contentscripts/youtubeOnWatch.js",
-                "contentscripts/youtubeOnResults.js"]
+        files: ["contentscripts/youtube.js"]
       })
     }
 

@@ -12,11 +12,9 @@ function init() {
   //저장된 데이터 불러오기
   chrome.storage.sync.get(
     ['mark_youvid'], function (result) {
-
         mark_youvid = result['mark_youvid']  // vid 리스트
-
         const container = document.body.querySelector('.mark_youtube_video')
-        if( mark_youvid.length ){
+        if( mark_youvid.length > 0 ){
           //영상 정보 요청  vid -> ( thumbnail, title, vid )
           fetch("http://43.201.187.250:8000/api/id="+ mark_youvid.toString(), {
             method: 'GET',
@@ -31,9 +29,7 @@ function init() {
             renderItems( container , res.items, 1 )
           })
         }else{
-          const youvidGreetings = document.createElement('h4')
-          youvidGreetings.textContent = "추가된 콘텐츠가 없습니다. 콘텐츠를 추가해주세요."
-          container.appendChild(youvidGreetings)
+          
         }
   })
 

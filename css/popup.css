@@ -52,7 +52,6 @@ h4 {
 }
 
 h3 {
-  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -87,7 +86,7 @@ a {
 
 
 .window {
-  width: 470px;
+  width: 377px;
   overflow: hidden;
 }
 
@@ -104,9 +103,9 @@ a {
 }
 
 .title {
-  background-color: #ffde96;
+  background-color: #f9f7ee;
   height: 40px;
-  border-bottom: 1px solid #f5f1f1;
+  margin-bottom: 7px;
 }
 
 .title > img{
@@ -121,8 +120,8 @@ a {
 }
 
 .title .btn_tab{
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border-radius: 30px;
 }
 
@@ -145,7 +144,7 @@ a {
 
 .content_row .card{
   display: flex;
-  gap : 3px;
+  gap : 1px;
   width: 97%;
   margin : 0.2rem 0;
 }
@@ -187,13 +186,12 @@ a {
   display:flex;
   align-items: center;
   max-height: 85px;
-  min-width: 264px;
   overflow: hidden;
   color: black;
 }
 
 .thumbnail {
-  width: 155px;
+  width: 153px;
   height: 85px;
 }
 
