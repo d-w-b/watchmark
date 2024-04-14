@@ -2,90 +2,92 @@ document.body.onload = function () {
   init()
 }
 
+document.body.addEventListener('mousemove', function(e){
+  console.log(e)
+})
+
 var state = Object()
 state.temp = undefined
-state.count = 0
 state.items = []
 
 // init
 function init() {
-  //저장된 데이터 불러오기
-  chrome.storage.sync.get(
-    ['mark_youvid'], function (result) {
-        mark_youvid = result['mark_youvid']  // vid 리스트
-        const container = document.body.querySelector('.mark_youtube_video')
-        if( mark_youvid.length > 0 ){
-          //영상 정보 요청  vid -> ( thumbnail, title, vid )
-          fetch("http://43.201.187.250:8000/api/id="+ mark_youvid.toString(), {
-            method: 'GET',
-          }).then(res => {
-            console.log(res)
-            return res.json()
-          }).then(res => {
-            console.log(res)
-            // state에 items 저장
-            state.items = [...res.items]
-            
-            renderItems( container , res.items, 1 )
-          })
-        }else{
-          
-        }
-  })
 
-  // mypage EventListeners
   document.querySelectorAll('.btn_tab').forEach((e =>{
-    e.addEventListener('click', btnmypageClickEventHandler)
+    e.addEventListener('click', btntabClickEventHandler)
   }))
 
+  //저장된 데이터 불러오기
+  chrome.storage.sync.get(
+    ['mark_youvid', 'mark_netflix_data', 'mark_watcha','mark_watcha_data', 'selectedIndex'], function (result) {
+
+      // Init container list view
+      const containerLists = document.querySelectorAll('li.contents_container')
+      containerLists[result['selectedIndex']].style.display = "block"
+
+      // Rendering content
+      // Render youtube video content
+      mark_youvid = result['mark_youvid'] 
+      console.log(mark_youvid)
+      const youtubeVideoContainer = document.body.querySelector('.mark_youtube')
+
+      // Request for server for youtube video data  @GET { vid } / @Return  ...{ thumbnails, title, vid } 
+      fetch("http://43.201.187.250:8000/api/id="+ mark_youvid.toString(), {
+        method: 'GET',
+      }).then(res => {
+        console.log(res)
+        return res.json()
+      }).then(res => {
+        console.log(res)
+        // deep copy to global var
+        state.items = [ ...res.items ]
+        renderYoutubeItems( youtubeVideoContainer , state.items, 1 )
+      })
+      
+      /* netflix */
+      mark_netflix_data = result['mark_netflix_data']
+      const netflixVideoContainer = document.body.querySelector('.mark_netflix')
+      renderItems( netflixVideoContainer , mark_netflix_data, 2 )
+
+      /* watcha */
+      mark_watcha_data = result['mark_watcha_data'] 
+      const watchaVideoContainer = document.body.querySelector('.mark_watcha')
+      renderItems( watchaVideoContainer , mark_watcha_data, 2)
+      console.log(mark_watcha_data)
+  })
 }
 
 
 /*********************************  이벤트 핸들러 *********************************/
 
-// 각 탭 이동 버튼 클릭 이벤트 핸들러
-
-// 마이페이지 아이콘 클릭 이벤트
-function btnmypageClickEventHandler(e) {
-  window.scrollTo(0, 0)
-  renderTab(1)
-}
-
-// 각 탭으로 이동 버튼 클릭 이벤트
+/* @param { PointerEvent } e */
 function btntabClickEventHandler(e) {
-  m = e.target.closest(".contents")
-  index = Array.from(m.parentNode.children).indexOf(m)
-  console.log(e.target, index)
+  const p = e.target.closest("button")
+  index = Array.from(p.parentNode.children).indexOf(p)
+  console.log(index)
   window.scrollTo(0, 0)
-  renderTab(index + 2); // 해당 탭으로 이동
-  console.log('이전 클릭');
+  renderTab(index ); // 해당 탭으로 이동
 }
-
-// 홈 화면으로 이동 클릭 이벤트 핸들러
-const prevBtns = document.querySelectorAll(".prev");
-prevBtns.forEach((btn, index) => {
-  btn.addEventListener("click", () => {
-    window.scrollTo(0, 0)
-    renderTab(0)
-  });
-});
 
 /*****************************************************************************************/
 
-function renderItems(container , items, numColumn) {
-  state.count = 0
+/* @param { DOM Node } container, { Array<YoutubeVideoData> } items, { int } numColumn */
+function renderYoutubeItems(container, items, numColumn) {
+  let count = 0
   for (item of items){
-    //3개씩 끊기
-    if (state.count % numColumn == 0){
+    // numColum 개수마다 행 끊기
+    if (count % numColumn == 0){
       var row = createDiv('content_row', null)
       row.classList.add('handover')
       row.classList.add('handover_gray')
     }
-
+    
     // Youtube data api 로부터 받아온 데이터
     let title = item.snippet.title
-    let thumbnail = item.snippet.thumbnails.maxres.url
+    let thumbnail
+    item.snippet.thumbnails.maxres ?  thumbnail = item.snippet.thumbnails.maxres.url :  thumbnail = item.snippet.thumbnails.standard.url;
 
+  
     //카드 생성
     card = createCard(
                       createImg(thumbnail, title, "thumbnail"),                                     
@@ -97,27 +99,56 @@ function renderItems(container , items, numColumn) {
     //행에 카드 추가
     row.appendChild(card)
     container.appendChild(row)
-    state.count++
+    count++
   }
 
   return container
 }
 
-function renderTab(index) {
-  const screens = Array.from(document.body.querySelector('.container').children)
-  for (i in screens) {
-    if (i == index) { screens[i].style.display = "block" }
-    else { screens[i].style.display = "none" }
+function renderItems(container, items, numColumn) {
+  let count = 0
+  for (item of items){
+    // numColum 개수마다 행 끊기
+    if (count % numColumn == 0){
+      var row = createDiv('content_row', null)
+      row.classList.add('handover')
+      row.classList.add('handover_gray')
+    }
+    
+    // Youtube data api 로부터 받아온 데이터
+    let title = item.title
+    let thumbnail = item.imgUrl
+
+  
+    //카드 생성
+    card = createWatchaCard(
+                      createImg(thumbnail, title, "thumbnail"),                                     
+                      createAnchor(item.watchUrl, null, onClickCard),
+                      item.id                                                                       
+                    )
+
+    //행에 카드 추가
+    row.appendChild(card)
+    container.appendChild(row)
+    count++
   }
+
+  return container
 }
 
 
-function getStorage(list){
-  return chrome.storage.sync.get(list)
+/* @param {int} index */
+function renderTab(index) {
+  // Update Model
+  chrome.storage.sync.set({selectedIndex : index})
+  // Update View
+  const li = Array.from(document.body.querySelector('.container').children)
+  for (i in li) {
+    if (i == index) { li[i].style.display = "block" }
+    else { li[i].style.display = "none" }
+  }
 }
 
 function swap(a, one, two){
   [a[one], a[two]] = [a[two], a[one]]
 }
-
-/**********************************************************************************/

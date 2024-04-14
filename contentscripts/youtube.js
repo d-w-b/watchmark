@@ -1,19 +1,80 @@
 /** Youtube Contents Script **/
 /*
     `
-        1. 시작 화면 /browse
+        1. 유튜브 홈 화면 /browse
         2. 검색 결과 화면 /result
         3. 영상 시청 화면 /watch
     `
     세 부분으로 나누어서 작성되었습니다.
 
-    각 페이지에서 DOM Node 변경 사항을 인식 후에, 
-    추가되는 카드에 버튼을 추가하여 Control,
-    Model : chrome.stroge.local.sync
-    View : popup.html
-    
-    형식으로 작성되었습니다.
+    웹 페이지에 진입 시 DOM Tree 변경 사항을 인식 후에, 
+    추가되는 카드에 버튼을 추가하여 데이터 추가 / 제거
+
 */
+
+youtubeContainersList = [];
+youtubeResultContainersList = [];  
+youtubeWatchContainersList = [];
+youtubeRefreshContainersList = [];
+youtubeErrList = []
+//youtubeShortsContainers = []
+//youtubeMixContainers = []
+
+/* Mutation Observer */
+/* Config */
+observerConfig={
+    childList : true,
+    subtree: true
+}
+
+
+// onBrowse Observer
+// mutationObserver 이벤트 핸들러
+function youtubeBrowseMutationHandler(mutationList, observer) {
+    let u = new URL(window.location.href)
+    if(u.pathname.length > 1 || u.host !== "www.youtube.com"){ observer.disconnect() }
+    else{
+        youtubeBrowseRecognizeContainers();
+        //youtubeOnBrowseRefresh()
+    }
+}
+
+onBrowseAppMountPoint = document.querySelector('div#content');
+if(onBrowseAppMountPoint){
+    observerOnBrowse = new MutationObserver(youtubeBrowseMutationHandler);
+    observerOnBrowse.observe(onBrowseAppMountPoint, observerConfig);
+}
+
+
+// onResult Observer
+// mutationObserver 이벤트 핸들러
+function youtubeResultMutationHandler(mutationList, observer) {
+    let u = new URL(window.location.href)
+    if(u.pathname !== '/results' || u.host !== "www.youtube.com"){ observer.disconnect() }
+    else{
+        youtubeResultRecognizeContainers();
+        //youtubeOnResultRefresh()
+    }
+}
+
+mountPointOnResult = document.querySelector('div#content');
+observerOnResult = new MutationObserver(youtubeResultMutationHandler);
+observerOnResult.observe(mountPointOnResult, observerConfig)
+
+
+if(window.location.href.includes('watch')){ 
+    
+    observerOnResult? observerOnResult.disconnect() : console.log();
+    observerOnBrowse? observerOnBrowse.disconnect() : console.log();
+    waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(()=>{
+        youtubeWatchRecognizeContainer();
+        youtubeOnWatchRefresh()
+    })
+    waitForElement('div#columns').then((mountPoint)=>{
+        observer = new MutationObserver(youtubeBrowseMutationHandler);
+        observer.observe(mountPoint, observerConfig);
+    })
+}
 
 /***********  onBrowse *************/ 
 // 유튜브 영상 찜하기 버튼
@@ -349,7 +410,6 @@ function youtubeWatchOnMouseOutHandler(e){
 }
 
 
-
 // Refresh UI When Model has changed.
 function youtubeOnWatchRefresh(){
     // url 에 /watch 가 포함되었는지 확인 후 refresh
@@ -379,59 +439,58 @@ function youtubeOnWatchRefresh(){
 
 function youtubeWatchRecognizeContainer(){
     container = document.body.querySelector('div#owner.item.style-scope.ytd-watch-metadata')
-    if(container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3].includes('@')){
-        channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3].slice(1,)
-    }else{
-        channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3]
-    }
-    vid = window.location.href.split('=')[1]
+    waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(( element )=>{
+        if(element.href.split('/')[3].includes('@')){
+            channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3].slice(1,)
+        }else{
+            channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3]
+        }
 
-    if(!youtubeWatchContainersList.includes(container) && channelName && vid){
+        vid = window.location.href.split('=')[1]
 
-        // Create Button for marking.
-        BtnMarkInner = document.createElement("img");
-    
-        chrome.storage.sync.get(['mark_youvid'], function(result){
-            mark_youvid = result['mark_youvid']
-            if( mark_youvid.includes(vid) ){
-                // 이미 추가된 항목이라면 체크 표시
-                BtnMarkInner.src = chrome.runtime.getURL("/images/check.png")
-            }else{
-                //아직 추가되지 않은 항목이라면 추가 표시
-                BtnMarkInner.src = chrome.runtime.getURL("/images/plus-sign2.png")
-            }
-        })
-    
-        // define style
-        // Object.assign(node.style, obj) 로 변경할 여지가 있음
-        BtnMarkInner.style.transition = "all 0.5s"
-        BtnMarkInner.style.borderRadius = "18px"
-    
-        const BtnMark = document.createElement('button');
-        BtnMark.classList.add("btn-mark");
-        BtnMark.style.position = "absolute";
-        BtnMark.style.right = "0px";
-        BtnMark.style.top = "-7px";
-        BtnMark.style.background = "none";
-        BtnMark.style.border = "none"
-        BtnMark.style.zIndex = 9999;
-        BtnMark.style.cursor = "pointer"
-    
-        BtnMarkInner.addEventListener('mouseover', youtubeWatchOnMouseOverHandler, false);
-        BtnMarkInner.addEventListener('mouseout', youtubeWatchOnMouseOutHandler, false);
-        BtnMark.addEventListener('click', youtubeWatchOnClickMarkHandler, false);
-    
-        BtnMark.appendChild(BtnMarkInner)
-        container.appendChild(BtnMark)
-    
-        youtubeWatchContainersList.push(container)
-    }    
-    
+        if(!youtubeWatchContainersList.includes(container) && channelName && vid){
+
+            // Create Button for marking.
+            BtnMarkInner = document.createElement("img");
+        
+            chrome.storage.sync.get(['mark_youvid'], function(result){
+                mark_youvid = result['mark_youvid']
+                if( mark_youvid.includes(vid) ){
+                    // 이미 추가된 항목이라면 체크 표시
+                    BtnMarkInner.src = chrome.runtime.getURL("/images/check.png")
+                }else{
+                    //아직 추가되지 않은 항목이라면 추가 표시
+                    BtnMarkInner.src = chrome.runtime.getURL("/images/plus-sign2.png")
+                }
+            })
+        
+            // define style
+            // Object.assign(node.style, obj) 로 변경할 여지가 있음
+            BtnMarkInner.style.transition = "all 0.5s"
+            BtnMarkInner.style.borderRadius = "18px"
+        
+            const BtnMark = document.createElement('button');
+            BtnMark.classList.add("btn-mark");
+            BtnMark.style.position = "absolute";
+            BtnMark.style.right = "0px";
+            BtnMark.style.top = "-7px";
+            BtnMark.style.background = "none";
+            BtnMark.style.border = "none"
+            BtnMark.style.zIndex = 9999;
+            BtnMark.style.cursor = "pointer"
+        
+            BtnMarkInner.addEventListener('mouseover', youtubeWatchOnMouseOverHandler, false);
+            BtnMarkInner.addEventListener('mouseout', youtubeWatchOnMouseOutHandler, false);
+            BtnMark.addEventListener('click', youtubeWatchOnClickMarkHandler, false);
+        
+            BtnMark.appendChild(BtnMarkInner)
+            container.appendChild(BtnMark)
+        
+            youtubeWatchContainersList.push(container)
+        }    
+    })
 }
 
-
-
-/****************************************************************************************************/
 
 // Listener for Checking if Model has changed.
 chrome.runtime.onMessage.addListener(msg => {
@@ -442,58 +501,3 @@ chrome.runtime.onMessage.addListener(msg => {
     }
 });
 
-/* Mutation Observer */
-/* Config */
-observerConfig={
-    childList : true,
-    subtree: true
-}
-
-
-// onBrowse Observer
-// mutationObserver 이벤트 핸들러
-function youtubeBrowseMutationHandler(mutationList, observer) {
-    let u = new URL(window.location.href)
-    if(u.pathname.length > 1 || u.host !== "www.youtube.com"){ observer.disconnect() }
-    else{
-        youtubeBrowseRecognizeContainers();
-        //youtubeOnBrowseRefresh()
-    }
-}
-
-onBrowseAppMountPoint = document.querySelector('div#content');
-if(onBrowseAppMountPoint){
-    observerOnBrowse = new MutationObserver(youtubeBrowseMutationHandler);
-    observerOnBrowse.observe(onBrowseAppMountPoint, observerConfig);
-}
-
-
-// onResult Observer
-// mutationObserver 이벤트 핸들러
-function youtubeResultMutationHandler(mutationList, observer) {
-    let u = new URL(window.location.href)
-    if(u.pathname !== '/results' || u.host !== "www.youtube.com"){ observer.disconnect() }
-    else{
-        youtubeResultRecognizeContainers();
-        //youtubeOnResultRefresh()
-    }
-}
-
-mountPointOnResult = document.querySelector('div#content');
-observerOnResult = new MutationObserver(youtubeResultMutationHandler);
-observerOnResult.observe(mountPointOnResult, observerConfig)
-
-
-if(window.location.href.includes('watch')){ 
-    
-    observerOnResult? observerOnResult.disconnect() : console.log();
-    observerOnBrowse? observerOnBrowse.disconnect() : console.log();
-    waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(()=>{
-        youtubeWatchRecognizeContainer();
-        youtubeOnWatchRefresh()
-    })
-    waitForElement('div#columns').then((mountPoint)=>{
-        observer = new MutationObserver(youtubeBrowseMutationHandler);
-        observer.observe(mountPoint, observerConfig);
-    })
-}

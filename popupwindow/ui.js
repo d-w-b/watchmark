@@ -81,13 +81,13 @@ function createSwapButton(){
 }
 
 // 삭제 버튼 생성
-function createDeleteButton(){
+function createDeleteButton( eventHandler ){
   // 버튼 이미지 생성
   img = createImg('icons/delete_black.png', '삭제 버튼', 'btn_delete_img')
 
   btnDelete = createButton(
     img,
-    onClickDelete, 
+    eventHandler, 
     'btn_delete'
   )
 
@@ -101,6 +101,7 @@ function createCard(img,   //카드 썸네일로 보여질 이미지
                     id){   //카드에 부여할 아이디
 
   card = createDiv("card", id)
+  //card.setAttribute("draggable", true)
 
   // 카드 내에서 보여질 제목
   txt = document.createElement('h3')
@@ -109,13 +110,37 @@ function createCard(img,   //카드 썸네일로 보여질 이미지
 
   btnWrapper = createDiv("arrange", null)
   // 카드에 추가할 버튼 생성
-  btnDelete = createDeleteButton()
+  btnDelete = createDeleteButton(onClickDelete)
   btnWrapper.append(btnDelete)
 
   //append
   anchor.append(
     img,
     txt
+  )
+  card.append(
+    anchor,
+    btnWrapper
+  )
+
+  return card
+}
+
+function createWatchaCard(
+                    img,   //카드 썸네일로 보여질 이미지
+                    anchor,//카드 클릭시 페이지 이동을 위한 anchor
+                    id){   //카드에 부여할 아이디
+
+  card = createDiv("card", id)
+
+  btnWrapper = createDiv("arrange", null)
+  // 카드에 추가할 버튼 생성
+  btnDelete = createDeleteButton(onClickDeleteWatcha)
+  btnWrapper.append(btnDelete)
+
+  //append
+  anchor.append(
+    img
   )
   card.append(
     anchor,
@@ -150,6 +175,36 @@ function onClickDelete(e){
 
     chrome.storage.sync.set({
       mark_youvid : vidList
+    }).then( () =>{
+      // Update View
+        if(e.target.closest('.content_row').childElementCount == 1){
+          e.target.closest('.content_row').remove()
+        }else{
+          e.target.closest('.card').remove()
+        }
+      })
+  })
+}
+
+function onClickDeleteWatcha(e){
+
+  // mark_watcha 불러오기
+  chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], function(result){
+    //cardWrapper, vid 찾기
+    parentNode = e.target.closest('.card')
+    vid = parentNode.dataset.id
+    mark_watcha = result['mark_watcha']
+    mark_watcha_data = result['mark_watcha_data']
+
+    // Update Model
+    // 인덱스를 찾은 후 리스트에서 해당 인덱스 아이템 제거
+    idx = mark_watcha.indexOf(vid)
+    mark_watcha.splice(idx,1)
+    mark_watcha_data.splice(idx, 1)
+
+    chrome.storage.sync.set({
+      mark_watcha : mark_watcha,
+      mark_watcha_data : mark_watcha_data
     }).then( () =>{
       // Update View
         if(e.target.closest('.content_row').childElementCount == 1){

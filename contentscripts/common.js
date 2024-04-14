@@ -1,18 +1,4 @@
 console.log("common.js")
-
-/** 공통 함수 및 변수 **/
-
-// containers list
-
-youtubeContainersList = [];
-youtubeResultContainersList = [];  
-youtubeWatchContainersList = [];
-youtubeRefreshContainersList = [];
-youtubeErrList = []
-//youtubeShortsContainers = []
-//youtubeMixContainers = []
-
-/************************************************************************************************/
 function waitForElement(selector) {
     return new Promise(resolve => {
       if (document.querySelector(selector)) {
@@ -54,7 +40,7 @@ function waitForHref(selector) {
 }
 
 
-/*** Youtube video Storage Add/Delete ***/
+/*** Youtube Content Storage Add/Delete ***/
 
 function addYouvidMarked(youvidid){
   chrome.storage.sync.get(['mark_youvid'], function(result){
@@ -75,7 +61,53 @@ function deleteYouvidMarked(index){
   })
 }
 
-/***** Netflix Content Storage Add/Delete *******/
+function addWatchaMarked(id, imgUrl, title, watchUrl){
+
+  content = {
+    'imgUrl' : imgUrl,
+    'title' : title,
+    'watchUrl' : watchUrl
+  }
+  console.log(content)
+
+  chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], function(result){
+    mark_watcha = result['mark_watcha']
+    mark_watcha_data = result['mark_watcha_data']
+
+    if(mark_watcha === undefined){
+      mark_watcha = []
+    }
+    if(mark_watcha_data === undefined){
+      mark_watcha_data = []
+    }
+
+    mark_watcha.push(id)
+    mark_watcha_data.push(content)
+
+    chrome.storage.sync.set({
+      mark_watcha : mark_watcha,
+      mark_watcha_data : mark_watcha_data
+    })
+  })
+}
+
+function deleteWatchaMarked(index){
+  console.log(index)
+  chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], function(result){
+    mark_watcha = result['mark_watcha']
+    mark_watcha_data = result['mark_watcha_data']
+    
+    mark_watcha.splice(index,1)
+    mark_watcha_data.splice(index,1)
+
+    chrome.storage.sync.set({
+      mark_watcha : mark_watcha,
+      mark_watcha_data : mark_watcha_data
+    })
+  })
+}
+
+
 function addNetflixMarked(id, imgUrl, title, watchUrl){
 
   content = {

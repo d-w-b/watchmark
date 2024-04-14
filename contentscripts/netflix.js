@@ -1,17 +1,30 @@
 /** 넷플릭스 Browse 페이지 크롬 확장 프로그램 스크립트 **/
 
+netflixContainersList = []
+
 /* Config */
 observerConfig={
     childList : true,
     subtree: true
 }
 
-/* 버튼 추가 함수 */ 
+chrome.runtime.onMessage.addListener(msg => {
+    if(msg === "refresh"){
+        netflixOnBrowseRefresh()
+    }
+});
+
+netflixAppMountPoint = document.querySelector("div#appMountPoint");
+netflixObserver = new MutationObserver(onBrowseMutationHandler);
+netflixObserver.observe(netflixAppMountPoint, observerConfig)
+
+
+/* @param { HTMLElement } pNode, { string } ottid */
 function netflixCreateBtnMark(pNode,ottid){
     const BtnInner = document.createElement("img");
-    chrome.storage.local.get(['mark_ott'], function(result){
-        mark_ott = result['mark_ott']
-        if( mark_ott.includes(ottid) ){
+    chrome.storage.local.get(['mark_netflix'], function(result){
+        mark_netflix = result['mark_netflix']
+        if( mark_netflix.includes(ottid) ){
             // 이미 추가된 항목이라면 체크 표시
             BtnInner.src = chrome.runtime.getURL("/images/check.png")
         } else{
@@ -20,11 +33,11 @@ function netflixCreateBtnMark(pNode,ottid){
         }
     })
 
-    // 버튼 이미지 스타일링
+    // inner <img> styling
     BtnInner.style.transition = "all 0.5s"
     BtnInner.style.borderRadius = "18px"
 
-    // 버튼 스타일링
+    // <button> styling
     const BtnMark = document.createElement('button');
     BtnMark.classList.add("btn-mark");
     BtnMark.style.position = "absolute";
@@ -43,6 +56,7 @@ function netflixCreateBtnMark(pNode,ottid){
 }
 
 /* 버튼 이벤트 핸들러 */
+/* @param { PointerEvent } e */
 function netflixBrowseOnClickMarkHandler(e){
 
     let container = e.target.parentNode.parentNode
@@ -51,10 +65,10 @@ function netflixBrowseOnClickMarkHandler(e){
     let watchUrl = container.querySelector('a').href
     let ottid = url.split('/')[4].split('?')[0] 
 
-    chrome.storage.local.get(['mark_ott'], function(result){
-        mark_ott = result['mark_ott']
+    chrome.storage.local.get(['mark_netflix'], function(result){
+        mark_netflix = result['mark_netflix']
         // 이미 추가된 콘텐트는 목록에서 삭제합니다.
-        if( mark_ott.includes(ottid) ){ 
+        if( mark_netflix.includes(ottid) ){ 
             deleteNetflixMarked(ottid)
         }else {
         // 아직 추가되지 않은 콘텐트는 목록에 추가합니다.
@@ -64,29 +78,31 @@ function netflixBrowseOnClickMarkHandler(e){
     })
 }
 
+/* @param { PointerEvent } e */
 function netflixBrowseOnMouseOverHandler(e){
     let container = e.target.parentNode.parentNode
     let url = container.querySelector('a').href
     let ottid = url.split('/')[4].split('?')[0] 
     e.target.style.boxShadow = "0 0 0 3px #FFF inset"
-    chrome.storage.local.get(['mark_ott'], function(result){
-        mark_ott = result['mark_ott']
-        if (!mark_ott.includes(ottid)){
+    chrome.storage.local.get(['mark_netflix'], function(result){
+        mark_netflix = result['mark_netflix']
+        if (!mark_netflix.includes(ottid)){
             e.target.src = chrome.runtime.getURL("/images/plus-sign2.png")
         }
     })
 }
 
+/* @param { PointerEvent } e */
 function netflixBrowseOnMouseOutHandler(e){
     let container = e.target.parentNode.parentNode
     let url = container.querySelector('a').href
     let ottid = url.split('/')[4].split('?')[0] 
     e.target.style.boxShadow = "none"
 
-    chrome.storage.local.get(['mark_ott'], function(result){
-        mark_ott = result['mark_ott']
+    chrome.storage.local.get(['mark_netflix'], function(result){
+        mark_netflix = result['mark_netflix']
         // 아직 추가되지 않은 콘텐트라면,
-        if (!mark_ott.includes(ottid)){
+        if (!mark_netflix.includes(ottid)){
             e.target.src = chrome.runtime.getURL("/images/plus-sign.png")
         }else{
         // 이미 추가된 콘텐트라면,
@@ -95,9 +111,8 @@ function netflixBrowseOnMouseOutHandler(e){
     })
 }
 
-/* 컨테이너 DOM Recognition */
+/* Observe for content container node */
 function recognizeContainers() {
-    
     card_containers = document.getElementsByClassName('title-card-container ltr-0');
     // 각 container 별로 '+' 버튼 추가 및 배열에 저장
     for (c of card_containers){
@@ -138,16 +153,3 @@ function netflixOnBrowseRefresh(){
 function onBrowseMutationHandler(mutationList, observer) {
     recognizeContainers();
 }
-
-
-
-/***********************************************************************************************************************/
-chrome.runtime.onMessage.addListener(msg => {
-    if(msg === "refresh"){
-        netflixOnBrowseRefresh()
-    }
-});
-
-appMountPoint = document.querySelector("div#appMountPoint");
-observer = new MutationObserver(onBrowseMutationHandler);
-observer.observe(appMountPoint, observerConfig)

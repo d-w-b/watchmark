@@ -6,7 +6,7 @@
   "background": {
     "service_worker": "background.js"
   },
-  "host_permissions": ["*://www.youtube.com/*"],
+  "host_permissions": ["*://www.youtube.com/*", "*://watcha.com/*", "*://www.netflix.com/*"],
   "permissions": [
     "storage",
     "activeTab",
@@ -24,7 +24,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://www.netflix.com/*","*://www.youtube.com/*","*://www.disneyplus.com/*","*://watcha.com/*","*://www.wavve.com/*"],
+      "matches": ["*://www.netflix.com/*","*://www.youtube.com/*","*://watcha.com/*"],
       "js": ["contentscripts/common.js"]
     }
   ],
