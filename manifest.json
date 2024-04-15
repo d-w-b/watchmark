@@ -16,11 +16,11 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "128": "/icons/btn.png"
+      "128": "/images/btn.png"
     }
   },
   "icons":{
-    "128": "/icons/btn.png"
+    "128": "/images/btn.png"
   },
   "content_scripts": [
     {

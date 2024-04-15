@@ -54,7 +54,7 @@ function createButton(img, eventHandler, className){
 // 체크 박스 버튼 생성
 function createCheckBox(){
   // 버튼 이미지 생성
-  img = createImg('icons/check_box_black.png', '선택 버튼','btn_check_img')
+  img = createImg('images/check_box_black.png', '선택 버튼','btn_check_img')
 
   btnCheck = createButton(
     img,
@@ -69,7 +69,7 @@ function createCheckBox(){
 // 순서 바꾸기 버튼 생성
 function createSwapButton(){
   // 버튼 이미지 생성
-  img = createImg('icons/check_box_black.png', '순서 변환 버튼','btn_swap_img')
+  img = createImg('images/check_box_black.png', '순서 변환 버튼','btn_swap_img')
 
   btnSwap = createButton(
     img,
@@ -83,7 +83,7 @@ function createSwapButton(){
 // 삭제 버튼 생성
 function createDeleteButton( eventHandler ){
   // 버튼 이미지 생성
-  img = createImg('icons/delete_black.png', '삭제 버튼', 'btn_delete_img')
+  img = createImg('images/delete_black.png', '삭제 버튼', 'btn_delete_img')
 
   btnDelete = createButton(
     img,
@@ -226,13 +226,13 @@ function onClickSwap(e){
 
     if (state.temp === undefined){
       state.temp = pNode
-      e.target.src = 'icons/checked_box_black.png'
+      e.target.src = 'images/checked_box_black.png'
     }else{
       let idx1 = a.indexOf(pNode.dataset.id)
       let idx2 = a.indexOf(state.temp.dataset.id)
 
       // Update View
-      state.temp.querySelector('.btn_swap > img').src = 'icons/check_box_black.png'
+      state.temp.querySelector('.btn_swap > img').src = 'images/check_box_black.png'
       let dummy = document.createElement("span")
       state.temp.before(dummy)
       pNode.before(state.temp)
