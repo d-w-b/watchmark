@@ -34,7 +34,7 @@ waitForElement('section.e1kgye4v2').then( container => {
 /* 버튼 추가 함수 */ 
 function watchaBrowseCreateBtnMarkElement(pNode,ottid){
     const BtnInner = document.createElement("img");
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         if( mark_watcha.includes(ottid) ){
             // 이미 추가된 항목이라면 체크 표시
@@ -76,7 +76,7 @@ function watchaBrowseOnClickMarkHandler(e){
     if(ottid.includes('?')){ ottid = ottid.split('?')[0]}
     let url = "https://watcha.com/watch/"+ ottid
 
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         // 이미 추가된 콘텐트는 목록에서 삭제합니다.
         if( mark_watcha.includes(ottid) ){
@@ -84,7 +84,6 @@ function watchaBrowseOnClickMarkHandler(e){
             deleteWatchaMarked(index)
         }else {
         // 아직 추가되지 않은 콘텐트는 목록에 추가합니다.
-
             addWatchaMarked(ottid, imgsrc, title, url)
         }
 
@@ -98,7 +97,8 @@ function watchaBrowseOnMouseOverHandler(e){
     let ottid = container.querySelector('a')?.href.split('/')[4]
     if(ottid.includes('?')){ ottid = ottid.split('?')[0]}
     e.target.style.boxShadow = "0 0 0 3px #FFF inset"
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         if (!mark_watcha.includes(ottid)){
             e.target.src = chrome.runtime.getURL("/images/plus-sign2.png")
@@ -112,7 +112,7 @@ function watchaBrowseOnMouseOutHandler(e){
     if(ottid.includes('?')){ ottid = ottid.split('?')[0]}
     e.target.style.boxShadow = "none"
 
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         // 아직 추가되지 않은 콘텐트라면,
         if (!mark_watcha.includes(ottid)){
@@ -146,7 +146,7 @@ function recognizeContainers() {
 
 //Refresh UI
 function watchaOnBrowseRefresh(){
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         for(c of watchaContainersList){
             let ottid = c.querySelector('a')?.href.split('/')[4]
@@ -170,7 +170,7 @@ function watchaOnBrowseRefresh(){
 /* 버튼 추가 함수 */ 
 function watchaContentsCreateBtnMark(pNode,ottid){
     const BtnInner = document.createElement("img");
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         if( mark_watcha.includes(ottid) ){
             // 이미 추가된 항목이라면 체크 표시
@@ -203,21 +203,15 @@ function watchaContentsCreateBtnMark(pNode,ottid){
 }
 
 function watchaContentsOnClickMarkHandler(e){
-    let img = document.body.querySelector('img.custom-4uwt2b.eoa6tv712')
-    let title = img.alt
-    let imgsrc = img.src
     let l = window.location.pathname
     let ottid = l.split('/').at(-1)
-    let url = "https://watcha.com/watch/"+ottid
 
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         // 이미 추가된 콘텐트는 목록에서 삭제합니다.
         if( mark_watcha.includes(ottid) ){ 
-            
             index = mark_watcha.indexOf(ottid)
             deleteWatchaMarked(index)
-
 
             //상세 페이지 화면의 버튼을 더하기 표시로 변경
             e.target.src = chrome.runtime.getURL("/images/plus-sign.png")
@@ -238,7 +232,7 @@ function watchaContentsOnMouseOverHandler(e){
     let l = window.location.pathname
     let ottid = l.split('/').at(-1)
         
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         if (!mark_watcha.includes(ottid)){
             e.target.src = chrome.runtime.getURL("/images/plus-sign2.png")
@@ -253,7 +247,7 @@ function watchaContentsOnMouseOutHandler(e){
     let l = window.location.pathname
     let ottid = l.split('/').at(-1)
 
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         // 아직 추가되지 않은 콘텐트라면,
         if (!mark_watcha.includes(ottid)){
@@ -268,7 +262,7 @@ function watchaContentsOnMouseOutHandler(e){
 
 //Refresh UI
 function watchaOnContentsRefresh(){
-    chrome.storage.sync.get(['mark_watcha'], function(result){
+    chrome.storage.sync.get(['mark_watcha'], result => {
         mark_watcha = result['mark_watcha']
         let l = window.location.pathname
         let ottid = l.split('/').at(-1)

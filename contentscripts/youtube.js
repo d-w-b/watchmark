@@ -80,7 +80,7 @@ if(window.location.href.includes('watch')){
 // 유튜브 영상 찜하기 버튼
 function youtubeBrowseCreateBtnMark(node, vid){
     const BtnInner = document.createElement("img");
-    chrome.storage.sync.get(['mark_youvid'], function(result){
+    chrome.storage.sync.get(['mark_youvid'], result => {
         
         mark_youvid = result['mark_youvid']
         if( mark_youvid.includes(vid) ){
@@ -122,7 +122,7 @@ function youtubeBrowseOnClickMarkHandler(e){
     console.log( e.target.closest('#details') )
     thumbnail = e.target.closest('#details').querySelector("a#video-title-link")
     vid = thumbnail?.href.split('/')[3].split('=')[1]
-    chrome.storage.sync.get(['mark_youvid'], function(result){
+    chrome.storage.sync.get(['mark_youvid'], result => {
         mark_youvid = result['mark_youvid']
         if (mark_youvid.includes(vid)){
             // 이미 추가된 콘텐트라면
@@ -210,7 +210,7 @@ function youtubeBrowseRecognizeContainers() {
 function youtubeOnBrowseRefresh(){
     console.log("onBrowseRefresh")
     // REFRESH
-    chrome.storage.sync.get(['mark_channel_name', 'mark_youvid'], function(result){
+    chrome.storage.sync.get(['mark_channel_name', 'mark_youvid'], result => {
         mark_channel_name = result["mark_channel_name"]
         mark_youvid = result['mark_youvid']
 
@@ -253,7 +253,7 @@ function youtubeOnBrowseRefresh(){
 // 유튜브 영상 찜하기 버튼 생성
 function youtubeResultCreateBtnMarkElement(node, vid){
     const BtnInner = document.createElement("img");
-    chrome.storage.sync.get(['mark_youvid'], function(result){
+    chrome.storage.sync.get(['mark_youvid'], result => {
 
         mark_youvid = result['mark_youvid']
         if( mark_youvid.includes(vid) ){
@@ -300,7 +300,7 @@ function youtubeResultOnClickMarkHandler(e){
             vid = url.split('/')[3].split('=')[1].slice(0,-3)
         }
     }
-    chrome.storage.sync.get(['mark_youvid'], function(result){
+    chrome.storage.sync.get(['mark_youvid'], result => {
         mark_youvid = result['mark_youvid']
         if (mark_youvid.includes(vid)){
             // 이미 추가된 콘텐트라면
@@ -356,7 +356,7 @@ function youtubeOnResultRefresh(){
     //onResult 화면의 카드의 알림 버튼 업데이트
     //url 에 /result 가 포함되어있는지 확인 후 refresh
     if(!window.location.href.includes('/result')){
-        chrome.storage.sync.get(['mark_youvid'], function(result){
+        chrome.storage.sync.get(['mark_youvid'], result => {
             mark_youvid = result['mark_youvid']
             
             for(c of youtubeResultContainersList){
@@ -383,7 +383,7 @@ function youtubeOnResultRefresh(){
 // btn-mark onClick event
 function youtubeWatchOnClickMarkHandler(e){
     vid = window.location.href.split('=')[1]
-    chrome.storage.sync.get(['mark_youvid'], function(result){
+    chrome.storage.sync.get(['mark_youvid'], result => {
         mark_youvid = result['mark_youvid']
         if (mark_youvid.includes(vid)){
             // 이미 추가된 콘텐트라면
@@ -422,7 +422,7 @@ function youtubeOnWatchRefresh(){
         }
         let vid = window.location.href.split('=')[1]   
     
-        chrome.storage.sync.get(['mark_youvid'], function(result){
+        chrome.storage.sync.get(['mark_youvid'], result => {
             mark_youvid = result['mark_youvid']
     
             if(mark_youvid.includes(vid)){
@@ -453,7 +453,7 @@ function youtubeWatchRecognizeContainer(){
             // Create Button for marking.
             BtnMarkInner = document.createElement("img");
         
-            chrome.storage.sync.get(['mark_youvid'], function(result){
+            chrome.storage.sync.get(['mark_youvid'], result => {
                 mark_youvid = result['mark_youvid']
                 if( mark_youvid.includes(vid) ){
                     // 이미 추가된 항목이라면 체크 표시

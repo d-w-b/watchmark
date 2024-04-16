@@ -22,7 +22,7 @@ netflixObserver.observe(netflixAppMountPoint, observerConfig)
 /* @param { HTMLElement } pNode, { string } ottid */
 function netflixCreateBtnMark(pNode,ottid){
     const BtnInner = document.createElement("img");
-    chrome.storage.local.get(['mark_netflix'], function(result){
+    chrome.storage.local.get(['mark_netflix'], result => {
         mark_netflix = result['mark_netflix']
         if( mark_netflix.includes(ottid) ){
             // 이미 추가된 항목이라면 체크 표시
@@ -65,7 +65,7 @@ function netflixBrowseOnClickMarkHandler(e){
     let watchUrl = container.querySelector('a').href
     let ottid = url.split('/')[4].split('?')[0] 
 
-    chrome.storage.local.get(['mark_netflix'], function(result){
+    chrome.storage.local.get(['mark_netflix'], result => {
         mark_netflix = result['mark_netflix']
         // 이미 추가된 콘텐트는 목록에서 삭제합니다.
         if( mark_netflix.includes(ottid) ){ 
@@ -84,7 +84,7 @@ function netflixBrowseOnMouseOverHandler(e){
     let url = container.querySelector('a').href
     let ottid = url.split('/')[4].split('?')[0] 
     e.target.style.boxShadow = "0 0 0 3px #FFF inset"
-    chrome.storage.local.get(['mark_netflix'], function(result){
+    chrome.storage.local.get(['mark_netflix'], result => {
         mark_netflix = result['mark_netflix']
         if (!mark_netflix.includes(ottid)){
             e.target.src = chrome.runtime.getURL("/images/plus-sign2.png")
@@ -99,7 +99,7 @@ function netflixBrowseOnMouseOutHandler(e){
     let ottid = url.split('/')[4].split('?')[0] 
     e.target.style.boxShadow = "none"
 
-    chrome.storage.local.get(['mark_netflix'], function(result){
+    chrome.storage.local.get(['mark_netflix'], result => {
         mark_netflix = result['mark_netflix']
         // 아직 추가되지 않은 콘텐트라면,
         if (!mark_netflix.includes(ottid)){
@@ -133,7 +133,7 @@ function recognizeContainers() {
 
 //Refresh UI
 function netflixOnBrowseRefresh(){
-    chrome.storage.local.get(['mark_netflix'], function(result){
+    chrome.storage.local.get(['mark_netflix'], result => {
         mark_netflix = result['mark_netflix']
         for(c of netflixContainersList){
             url = c.querySelector('a').href

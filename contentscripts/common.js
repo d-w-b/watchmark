@@ -1,4 +1,6 @@
 console.log("common.js")
+//contentscripts 에서 공통적으로 쓰이는 함수들 정리
+
 function waitForElement(selector) {
     return new Promise(resolve => {
       if (document.querySelector(selector)) {
@@ -41,9 +43,8 @@ function waitForHref(selector) {
 
 
 /*** Youtube Content Storage Add/Delete ***/
-
 function addYouvidMarked(youvidid){
-  chrome.storage.sync.get(['mark_youvid'], function(result){
+  chrome.storage.sync.get(['mark_youvid'], result => {
       mark_youvid = result['mark_youvid']
       if(mark_youvid === undefined){
         mark_youvid = []
@@ -54,7 +55,7 @@ function addYouvidMarked(youvidid){
 }
 
 function deleteYouvidMarked(index){
-  chrome.storage.sync.get(['mark_youvid'], function(result){
+  chrome.storage.sync.get(['mark_youvid'], result => {
       mark_youvid = result['mark_youvid']
       mark_youvid.splice(index,1)
       chrome.storage.sync.set({mark_youvid : mark_youvid})
@@ -70,7 +71,7 @@ function addWatchaMarked(id, imgUrl, title, watchUrl){
   }
   console.log(content)
 
-  chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], function(result){
+  chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], result => {
     mark_watcha = result['mark_watcha']
     mark_watcha_data = result['mark_watcha_data']
 
@@ -93,7 +94,7 @@ function addWatchaMarked(id, imgUrl, title, watchUrl){
 
 function deleteWatchaMarked(index){
   console.log(index)
-  chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], function(result){
+  chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], result => {
     mark_watcha = result['mark_watcha']
     mark_watcha_data = result['mark_watcha_data']
     
@@ -109,14 +110,13 @@ function deleteWatchaMarked(index){
 
 
 function addNetflixMarked(id, imgUrl, title, watchUrl){
-
   content = {
     'imgUrl' : imgUrl,
     'title' : title,
     'watchUrl' : watchUrl
   }
 
-  chrome.storage.sync.get(['mark_netflix', 'mark_netflix_data'], function(result){
+  chrome.storage.sync.get(['mark_netflix', 'mark_netflix_data'], result => {
     mark_netflix = result['mark_netflix']
     mark_netflix_data = result['mark_netflix_data']
 
@@ -138,7 +138,7 @@ function addNetflixMarked(id, imgUrl, title, watchUrl){
 }
 
 function deleteNetflixMarked(id){
-  chrome.storage.sync.get(['mark_netflix'], function(result){
+  chrome.storage.sync.get(['mark_netflix'], result => {
       mark_netflix = result['mark_netflix']
       for(i in arr){
         if(arr[i].id === id){
