@@ -2,10 +2,6 @@ document.body.onload = function () {
   init()
 }
 
-document.body.addEventListener('mousemove', function(e){
-  console.log(e)
-})
-
 var state = Object()
 state.temp = undefined
 state.items = []
@@ -19,8 +15,8 @@ function init() {
 
   //저장된 데이터 불러오기
   chrome.storage.sync.get(
-    ['mark_youvid', 'mark_netflix_data', 'mark_watcha','mark_watcha_data', 'selectedIndex'], function (result) {
-
+    ['mark_youvid', 'mark_netflix_data', 'mark_watcha','mark_watcha_data', 'selectedIndex'], 
+    function (result) {
       // Init container list view
       const containerLists = document.querySelectorAll('li.contents_container')
       containerLists[result['selectedIndex']].style.display = "block"
@@ -31,7 +27,8 @@ function init() {
       console.log(mark_youvid)
       const youtubeVideoContainer = document.body.querySelector('.mark_youtube')
 
-      // Request for server for youtube video data  @GET { vid } / @Return  ...{ thumbnails, title, vid } 
+      // Request for server for youtube video data  @GET { vid } / @Return  ...{ thumbnails, title, vid }
+      // CORS 오류를 해결하기 위해 프록시 서버로 우회해서 youtube api 요청
       fetch("http://43.201.187.250:8000/api/id="+ mark_youvid.toString(), {
         method: 'GET',
       }).then(res => {
@@ -53,7 +50,7 @@ function init() {
       mark_watcha_data = result['mark_watcha_data'] 
       const watchaVideoContainer = document.body.querySelector('.mark_watcha')
       renderItems( watchaVideoContainer , mark_watcha_data, 2)
-      console.log(mark_watcha_data)
+      //console.log(mark_watcha_data)
   })
 }
 
@@ -105,6 +102,7 @@ function renderYoutubeItems(container, items, numColumn) {
   return container
 }
 
+/* @param { DOMNode } container, { Array<ContentsContainer> } items, { int } numColumn */
 function renderItems(container, items, numColumn) {
   let count = 0
   for (item of items){
