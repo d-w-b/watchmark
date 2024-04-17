@@ -9,7 +9,6 @@
   "host_permissions": ["*://www.youtube.com/*", "*://watcha.com/*", "*://www.netflix.com/*"],
   "permissions": [
     "storage",
-    "activeTab",
     "scripting",
     "tabs"
   ],
