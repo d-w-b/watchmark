@@ -55,7 +55,7 @@ p{
     font-size: 16px;
     font-weight: 500;
     padding: 1rem 0.5rem;
-    margin:0;
+    margin-top: 1rem;
 }
 
 img.exp{
@@ -159,7 +159,7 @@ h2::before{
 
 h2.left{
     text-align: left;
-    line-height: 1;
+    line-height: 0.5;
 }
 
 .radius{
