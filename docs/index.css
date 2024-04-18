@@ -1,5 +1,6 @@
 *{
     font-family: "Pretendard Variable";
+    margin: 0
 }
 html{
     width: 100vw;
@@ -158,6 +159,7 @@ h2::before{
 
 h2.left{
     text-align: left;
+    line-height: 1;
 }
 
 .radius{
