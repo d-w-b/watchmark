@@ -1,6 +1,45 @@
 *{
     font-family: "Pretendard Variable";
 }
+html{
+    width: 100vw;
+}
+
+a{
+    text-decoration: none;
+    color:rgb(30, 120, 255);
+    font-weight: 500;
+    border-radius: 8px;
+    padding :8px 12px;
+    box-shadow: 0px 0px 3px rgb(30, 120, 255);
+}
+
+header{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    position: fixed;
+    top: 30%;
+    right : 20%;
+}
+
+main{
+    position: relative;
+    max-width: 50rem;
+    padding-top: 2rem;
+    margin : auto;
+    border-left:1px solid #f2f2f2;
+    border-right:1px solid #f2f2f2;
+    text-align: center;
+}
+
+header > img{
+    border-radius: 100%;
+    width: 3rem;
+    height: 3rem;
+    box-shadow: 0 0 12px #888;
+}
 
 h1{
     font-family: "Inter", sans-serif;
@@ -13,19 +52,22 @@ h1{
 
 p{
     font-size: 16px;
+    font-weight: 500;
     padding: 1rem 0.5rem;
     margin:0;
 }
 
-img{
+img.exp{
+    width: 100%;
     max-width: 43rem;
 }
 
 img.icon{
-    position: absolute;
-    left: 42%;
-    bottom: 8px;
-    margin: 0 1.2rem;
+    width: 40px;
+    position: relative;
+    left: 12px;
+    bottom: 4px;
+    margin: 0 1rem;
 }
 
 img.exp{
@@ -39,14 +81,7 @@ a.store{
     color: black;
 }
 
-main{
-    max-width: 50rem;
-    padding-top: 2rem;
-    margin : auto;
-    border-left:1px solid #f2f2f2;
-    border-right:1px solid #f2f2f2;
-    text-align: center;
-}
+
 
 h1{
     width: 100%;
@@ -67,9 +102,9 @@ h2.right{
 h2::after{
     content: '';
     position:absolute;
-    bottom: -1rem;
-    display:block;
-    width:58%;
+    bottom: -12px;
+    display: block;
+    width:55%;
     height: 2px;
     background-color: black;
 }
@@ -79,8 +114,8 @@ h2::after{
 }
 
 h2.right::after{
-    right: -4px;
-    width: 75%;
+    right : 0;
+    width: 59%;
 }
 
 section{
@@ -97,7 +132,7 @@ section.odd{
 
 }
 section.even{
-    background-color: antiquewhite;
+    background-color: #faebd7;
 }
 
 .flex-row{
@@ -131,4 +166,12 @@ h2.left{
 
 .al_right{
     text-align: right;
+}
+.al_left{
+    text-align: left;
+}
+
+
+@media screen {
+    
 }
