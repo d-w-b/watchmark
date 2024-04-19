@@ -61,11 +61,11 @@ chrome.tabs.onUpdated.addListener(
     let id = tabId
     let url = new URL(tab.url)
 
-    chrome.tabs.query({}, tabs => {
-      tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id, 'refresh');
-      });
-    });
+    // chrome.tabs.query({}, tabs => {
+    //   tabs.forEach(tab => {
+    //     chrome.tabs.sendMessage(tab.id, 'refresh');
+    //   });
+    // });
 
     if (changeInfo.status == "complete" && url.hostname.includes("www.youtube.com")) {
       chrome.scripting.executeScript({

@@ -1,22 +1,17 @@
-/** Youtube Contents Script **/
 /*
-    `
-        1. 유튜브 홈 화면 /browse
-        2. 검색 결과 화면 /result
-        3. 영상 시청 화면 /watch
-    `
-    세 부분으로 나누어서 작성되었습니다.
-
-    웹 페이지에 진입 시 DOM Tree 변경 사항을 인식 후에, 
-    추가되는 카드에 버튼을 추가하여 데이터 추가 / 제거
-
+    유튜브 홈 화면 /browse
+    검색 결과 화면 /result
+    영상 시청 화면 /watch
 */
-
-youtubeContainersList = [];
-youtubeResultContainersList = [];  
-youtubeWatchContainersList = [];
-youtubeRefreshContainersList = [];
-youtubeErrList = []
+// 초기화
+var youtubeContainersList = [];
+var youtubeResultContainersList = [];  
+var youtubeWatchContainersList = [];
+var youtubeRefreshContainersList = [];
+var youtubeErrList = []
+var observerOnResult = undefined
+var observerOnBrowse = undefined
+var observerOnWatch = undefined
 //youtubeShortsContainers = []
 //youtubeMixContainers = []
 
@@ -27,6 +22,14 @@ observerConfig={
     subtree: true
 }
 
+onBrowseAppMountPoint = document.querySelector('div#content');
+observerOnBrowse = new MutationObserver(youtubeBrowseMutationHandler);
+onBrowseAppMountPoint?  observerOnBrowse.observe(onBrowseAppMountPoint, observerConfig) : console.log('onBrowseAppMountPoint Not Found')
+
+mountPointOnResult = document.querySelector('div#content');
+observerOnResult = new MutationObserver(youtubeResultMutationHandler);
+mountPointOnResult ? observerOnResult.observe(mountPointOnResult, observerConfig) : console.log('mountPointOnResult Not Found')
+document.querySelectorAll('.btn-mark')?.forEach( element => element.remove() )
 
 // onBrowse Observer
 // mutationObserver 이벤트 핸들러
@@ -39,12 +42,6 @@ function youtubeBrowseMutationHandler(mutationList, observer) {
     }
 }
 
-onBrowseAppMountPoint = document.querySelector('div#content');
-if(onBrowseAppMountPoint){
-    observerOnBrowse = new MutationObserver(youtubeBrowseMutationHandler);
-    observerOnBrowse.observe(onBrowseAppMountPoint, observerConfig);
-}
-
 
 // onResult Observer
 // mutationObserver 이벤트 핸들러
@@ -53,26 +50,23 @@ function youtubeResultMutationHandler(mutationList, observer) {
     if(u.pathname !== '/results' || u.host !== "www.youtube.com"){ observer.disconnect() }
     else{
         youtubeResultRecognizeContainers();
-        //youtubeOnResultRefresh()
+        youtubeOnResultRefresh()
     }
 }
 
-mountPointOnResult = document.querySelector('div#content');
-observerOnResult = new MutationObserver(youtubeResultMutationHandler);
-observerOnResult.observe(mountPointOnResult, observerConfig)
 
 
 if(window.location.href.includes('watch')){ 
-    
+    console.log('/watch')
     observerOnResult? observerOnResult.disconnect() : console.log();
     observerOnBrowse? observerOnBrowse.disconnect() : console.log();
     waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(()=>{
         youtubeWatchRecognizeContainer();
-        youtubeOnWatchRefresh()
+        //youtubeOnWatchRefresh()
     })
     waitForElement('div#columns').then((mountPoint)=>{
-        observer = new MutationObserver(youtubeBrowseMutationHandler);
-        observer.observe(mountPoint, observerConfig);
+        observerOnWatch = new MutationObserver(youtubeBrowseMutationHandler);
+        observerOnWatch.observe(mountPoint, observerConfig);
     })
 }
 
@@ -380,6 +374,7 @@ function youtubeOnResultRefresh(){
 }
 
 /***********  onWatch *************/ 
+
 // btn-mark onClick event
 function youtubeWatchOnClickMarkHandler(e){
     vid = window.location.href.split('=')[1]
@@ -412,6 +407,7 @@ function youtubeWatchOnMouseOutHandler(e){
 
 // Refresh UI When Model has changed.
 function youtubeOnWatchRefresh(){
+    console.log('onWatchRefresh')
     // url 에 /watch 가 포함되었는지 확인 후 refresh
     if(window.location.href.includes('watch')){
         let container = document.body.querySelector('div#owner.item.style-scope.ytd-watch-metadata')
@@ -440,18 +436,19 @@ function youtubeOnWatchRefresh(){
 function youtubeWatchRecognizeContainer(){
     container = document.body.querySelector('div#owner.item.style-scope.ytd-watch-metadata')
     waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(( element )=>{
-        if(element.href.split('/')[3].includes('@')){
-            channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3].slice(1,)
-        }else{
-            channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3]
-        }
+        // if(element.href.split('/')[3].includes('@')){
+        //     channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3].slice(1,)
+        // }else{
+        //     channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3]
+        // }
 
         vid = window.location.href.split('=')[1]
 
-        if(!youtubeWatchContainersList.includes(container) && channelName && vid){
+        if(!youtubeWatchContainersList.includes(container) && vid){
 
             // Create Button for marking.
-            BtnMarkInner = document.createElement("img");
+            const BtnMark = document.createElement('button');
+            const BtnMarkInner = document.createElement("img");
         
             chrome.storage.sync.get(['mark_youvid'], result => {
                 mark_youvid = result['mark_youvid']
@@ -469,7 +466,6 @@ function youtubeWatchRecognizeContainer(){
             BtnMarkInner.style.transition = "all 0.5s"
             BtnMarkInner.style.borderRadius = "18px"
         
-            const BtnMark = document.createElement('button');
             BtnMark.classList.add("btn-mark");
             BtnMark.style.position = "absolute";
             BtnMark.style.right = "0px";
@@ -485,7 +481,7 @@ function youtubeWatchRecognizeContainer(){
         
             BtnMark.appendChild(BtnMarkInner)
             container.appendChild(BtnMark)
-        
+            console.log(BtnMark.parentNode)
             youtubeWatchContainersList.push(container)
         }    
     })
@@ -494,10 +490,13 @@ function youtubeWatchRecognizeContainer(){
 
 // Listener for Checking if Model has changed.
 chrome.runtime.onMessage.addListener(msg => {
+
     if(msg === "refresh"){
+        console.log('refresh')
         youtubeOnBrowseRefresh()
         youtubeOnResultRefresh()
         youtubeOnWatchRefresh()
     }
+
 });
 
