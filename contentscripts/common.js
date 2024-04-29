@@ -49,7 +49,8 @@ function addYouvidMarked(youvidid){
       if(mark_youvid === undefined){
         mark_youvid = []
       }
-      mark_youvid.push(youvidid)
+      // & 로 시작하는 문자열 제거 (ie. list)
+      mark_youvid.push(youvidid.replace(/&.+/g, ''))
       chrome.storage.sync.set({mark_youvid : mark_youvid})
   })
 }

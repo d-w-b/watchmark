@@ -117,6 +117,7 @@ function youtubeBrowseOnClickMarkHandler(e){
     thumbnail = e.target.closest('#details').querySelector("a#video-title-link")
     vid = thumbnail?.href.split('/')[3].split('=')[1]
     chrome.storage.sync.get(['mark_youvid'], result => {
+        vid=vid.replace(/&[^&]*/g, '') 
         mark_youvid = result['mark_youvid']
         if (mark_youvid.includes(vid)){
             // 이미 추가된 콘텐트라면
@@ -188,6 +189,7 @@ function youtubeBrowseRecognizeContainers() {
                 // 쇼츠를 제외한 영상만 처리, 쇼츠 영상 url 에는 "shorts" 가 포함됩니다.
                 if(!url.includes("shorts") && url[3]){
                     vid = url[3].split('=')[1]
+                    vid=vid.replace(/&[^&]*/g, '')
                     youtubeBrowseCreateBtnMark(c, vid)
                     youtubeContainersList.push(c)
                 }
@@ -220,6 +222,7 @@ function youtubeOnBrowseRefresh(){
 
             if( url && !url.includes('shorts') ){
                 vid = url.split('/')[3].split('=')[1]
+                vid = vid.replace(/&[^&]*/g, '')
                 title = (c.querySelector("a#avatar-link")?.title === "undefined")
     
                 if(title){
@@ -296,6 +299,7 @@ function youtubeResultOnClickMarkHandler(e){
     }
     chrome.storage.sync.get(['mark_youvid'], result => {
         mark_youvid = result['mark_youvid']
+
         if (mark_youvid.includes(vid)){
             // 이미 추가된 콘텐트라면
             idx = mark_youvid.indexOf(vid)
@@ -379,6 +383,7 @@ function youtubeOnResultRefresh(){
 function youtubeWatchOnClickMarkHandler(e){
     vid = window.location.href.split('=')[1]
     chrome.storage.sync.get(['mark_youvid'], result => {
+        vid=vid.replace(/&[^&]*/g, '')
         mark_youvid = result['mark_youvid']
         if (mark_youvid.includes(vid)){
             // 이미 추가된 콘텐트라면
@@ -417,7 +422,7 @@ function youtubeOnWatchRefresh(){
             channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').href.split('/')[3]
         }
         let vid = window.location.href.split('=')[1]   
-    
+        vid=vid.replace(/&[^&]*/g, '')
         chrome.storage.sync.get(['mark_youvid'], result => {
             mark_youvid = result['mark_youvid']
     

@@ -29,7 +29,7 @@ function init() {
 
       // Request for server for youtube video data  @GET { vid } / @Return  ...{ thumbnails, title, vid }
       // CORS 오류를 해결하기 위해 프록시 서버로 우회해서 youtube api 요청
-      fetch("http://43.201.187.250:8000/api/id="+ mark_youvid.toString(), {
+      fetch("http://43.201.187.250:8000/id="+ mark_youvid.toString(), {
         method: 'GET',
       }).then(res => {
         console.log(res)
