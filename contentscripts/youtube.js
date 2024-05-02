@@ -202,7 +202,7 @@ function youtubeBrowseRecognizeContainers() {
 }
 
 
-// Refresh UI When Model has changed.
+// Refresh UI when Model has changed.
 function youtubeOnBrowseRefresh(){
     console.log("onBrowseRefresh")
     // REFRESH
@@ -410,7 +410,7 @@ function youtubeWatchOnMouseOutHandler(e){
 }
 
 
-// Refresh UI When Model has changed.
+// Refresh UI when Model has changed.
 function youtubeOnWatchRefresh(){
     console.log('onWatchRefresh')
     // url 에 /watch 가 포함되었는지 확인 후 refresh
@@ -441,6 +441,7 @@ function youtubeOnWatchRefresh(){
 function youtubeWatchRecognizeContainer(){
     container = document.body.querySelector('div#owner.item.style-scope.ytd-watch-metadata')
     waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(( element )=>{
+        // **Deprecated**
         // if(element.href.split('/')[3].includes('@')){
         //     channelName= container.querySelector('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer')?.href.split('/')[3].slice(1,)
         // }else{
