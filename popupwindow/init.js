@@ -1,53 +1,44 @@
-document.body.onload = function () {
-  init()
-}
+import YoutubeClient from "./client.js"
+
+init();
 
 var state = Object()
 state.temp = undefined
 state.items = []
 
-// init
+// init popup html
+// render content stored in sync storage
 function init() {
-
   document.querySelectorAll('.btn_tab').forEach((e =>{
     e.addEventListener('click', btntabClickEventHandler)
   }))
 
-  //저장된 데이터 불러오기
   chrome.storage.sync.get(
     ['mark_youvid', 'mark_netflix_data', 'mark_watcha','mark_watcha_data', 'selectedIndex'], 
     function (result) {
-      // Init container list view
+
       const containerLists = document.querySelectorAll('li.contents_container')
       containerLists[result['selectedIndex']].style.display = "block"
 
-      // Rendering content
-      // Render youtube video content
-      mark_youvid = result['mark_youvid'] 
-      console.log(mark_youvid)
+      const mark_youvid = result['mark_youvid'] 
       const youtubeVideoContainer = document.body.querySelector('.mark_youtube')
 
-      // Request for server for youtube video data  @GET { vid } / @Return  ...{ thumbnails, title, vid }
-      // CORS 오류를 해결하기 위해 프록시 서버로 우회해서 youtube api 요청
-      fetch("http://43.201.187.250:8000/id="+ mark_youvid.toString(), {
-        method: 'GET',
-      }).then(res => {
-        console.log(res)
-        return res.json()
-      }).then(res => {
-        console.log(res)
-        // deep copy to global var
-        state.items = [ ...res.items ]
-        renderYoutubeItems( youtubeVideoContainer , state.items, 1 )
-      })
+      /* youtube */
+      const client = new YoutubeClient()
+      client.videos(mark_youvid.toString())
+        .then( res=> {
+          // deep copy to global variable for manipulate data w/o server communication.
+          state.items = [ ...res.items ]
+          renderYoutubeItems( youtubeVideoContainer , state.items, 1 )
+        })
       
       /* netflix */
-      mark_netflix_data = result['mark_netflix_data']
+      const mark_netflix_data = result['mark_netflix_data']
       const netflixVideoContainer = document.body.querySelector('.mark_netflix')
       renderItems( netflixVideoContainer , mark_netflix_data, 2 )
 
       /* watcha */
-      mark_watcha_data = result['mark_watcha_data'] 
+      const mark_watcha_data = result['mark_watcha_data'] 
       const watchaVideoContainer = document.body.querySelector('.mark_watcha')
       renderItems( watchaVideoContainer , mark_watcha_data, 2)
       //console.log(mark_watcha_data)
@@ -60,7 +51,7 @@ function init() {
 /* @param { PointerEvent } e */
 function btntabClickEventHandler(e) {
   const p = e.target.closest("button")
-  index = Array.from(p.parentNode.children).indexOf(p)
+  const index = Array.from(p.parentNode.children).indexOf(p)
   console.log(index)
   window.scrollTo(0, 0)
   renderTab(index ); // 해당 탭으로 이동
@@ -71,7 +62,7 @@ function btntabClickEventHandler(e) {
 /* @param { DOM Node } container, { Array<YoutubeVideoData> } items, { int } numColumn */
 function renderYoutubeItems(container, items, numColumn) {
   let count = 0
-  for (item of items){
+  for (let item of items){
     // numColum 개수마다 행 끊기
     if (count % numColumn == 0){
       var row = createDiv('content_row', null)
@@ -105,7 +96,7 @@ function renderYoutubeItems(container, items, numColumn) {
 /* @param { DOMNode } container, { Array<ContentsContainer> } items, { int } numColumn */
 function renderItems(container, items, numColumn) {
   let count = 0
-  for (item of items){
+  for (let item of items){
     // numColum 개수마다 행 끊기
     if (count % numColumn == 0){
       var row = createDiv('content_row', null)
@@ -141,7 +132,7 @@ function renderTab(index) {
   chrome.storage.sync.set({selectedIndex : index})
   // Update View
   const li = Array.from(document.body.querySelector('.container').children)
-  for (i in li) {
+  for (let i in li) {
     if (i == index) { li[i].style.display = "block" }
     else { li[i].style.display = "none" }
   }
