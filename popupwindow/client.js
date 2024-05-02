@@ -6,8 +6,8 @@ export default class YoutubeClient{
         this.urlWithParam = 'http://43.201.187.250:8000/id='
     }
 
-    async videos(ids){
-        const res = await fetch(this.urlWithParam + ids, {
+    async videos(vids){
+        const res = await fetch(this.urlWithParam + vids, {
             method: 'GET',
         })
         return res.json()
