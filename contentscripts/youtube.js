@@ -57,7 +57,6 @@ function youtubeResultMutationHandler(mutationList, observer) {
 
 
 if(window.location.href.includes('watch')){ 
-    console.log('/watch')
     observerOnResult? observerOnResult.disconnect() : console.log();
     observerOnBrowse? observerOnBrowse.disconnect() : console.log();
     waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(()=>{

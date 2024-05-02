@@ -1,4 +1,7 @@
 // ui.js defines components for rendering popup.html
+var state = Object()
+state.temp = undefined
+state.items = []
 
 function createAnchor ( href, className, clickEventHandler ){
     a = document.createElement('a')
