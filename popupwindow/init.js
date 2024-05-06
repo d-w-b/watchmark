@@ -27,6 +27,7 @@ function init() {
       const client = new YoutubeClient()
       client.videos(mark_youvid.toString())
         .then( res=> {
+          console.log(res)
           // deep copy to global variable for manipulate data w/o server communication.
           state.items = [ ...res.items ]
           renderYoutubeItems( youtubeVideoContainer , state.items, 1 )
