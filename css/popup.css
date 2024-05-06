@@ -189,12 +189,13 @@ a {
 }
 
 .card h3 {
-  display:flex;
-  align-items: center;
+  display: -webkit-box;
   max-height: 85px;
   max-width : 187px;
   overflow: hidden;
   color: black;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical; 
 }
 
 .thumbnail {
