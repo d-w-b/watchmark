@@ -1,6 +1,8 @@
-import YoutubeClient from "./client.js"
+import {YoutubeClient} from "./client.js"
 
 init();
+
+
 
 var state = Object()
 state.temp = undefined
@@ -27,9 +29,11 @@ function init() {
       const client = new YoutubeClient()
       client.videos(mark_youvid.toString())
         .then( res=> {
-          console.log(res)
-          // deep copy to global variable for manipulate data w/o server communication.
+          // deep copy to global variable for manipulating data w/o server communication.
           state.items = [ ...res.items ]
+          for (node of youtubeVideoContainer.children ){
+            node.remove()
+          }
           renderYoutubeItems( youtubeVideoContainer , state.items, 1 )
         })
       
@@ -53,7 +57,6 @@ function init() {
 function btntabClickEventHandler(e) {
   const p = e.target.closest("button")
   const index = Array.from(p.parentNode.children).indexOf(p)
-  console.log(index)
   window.scrollTo(0, 0)
   renderTab(index ); // 해당 탭으로 이동
 }
@@ -62,6 +65,7 @@ function btntabClickEventHandler(e) {
 
 /* @param { DOM Node } container, { Array<YoutubeVideoData> } items, { int } numColumn */
 function renderYoutubeItems(container, items, numColumn) {
+  //
   let count = 0
   for (let item of items){
     // numColum 개수마다 행 끊기

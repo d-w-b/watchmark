@@ -4,7 +4,8 @@
   "version": "0.4",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type":"module"
   },
   "host_permissions": ["*://www.youtube.com/*", "*://watcha.com/*", "*://www.netflix.com/*"],
   "permissions": [

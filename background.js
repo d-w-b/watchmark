@@ -1,9 +1,14 @@
+import {createCache, updateCache, setCache}  from "./popupwindow/client.js";
+
 /**** onInstalled 이벤트 리스너 ****/
 /*
   크롬 확장프로그램 설치 시에 chrome.storage.sync 초기화
 */
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.get(['mark_youvid', 'mark_netflix', 'mark_watcha', 'selectedIndex'], function(result){
+  chrome.storage.sync.get(['mark_youvid', 'mark_netflix', 'mark_watcha', 'cacheTimer', 'selectedIndex'], function(result){
+    if(!result['cacheTimer']){
+      chrome.storage.sync.set({cacheTimer : new Date().getTime()})
+    }
     if(!result['mark_youvid']){
       chrome.storage.sync.set({mark_youvid : []})
     }
@@ -60,7 +65,6 @@ chrome.tabs.onUpdated.addListener(
   function (tabId, changeInfo, tab) {
     let id = tabId
     let url = new URL(tab.url)
-
     // chrome.tabs.query({}, tabs => {
     //   tabs.forEach(tab => {
     //     chrome.tabs.sendMessage(tab.id, 'refresh');
@@ -91,10 +95,14 @@ chrome.tabs.onUpdated.addListener(
 );
 
 
-// 필요할 경우 추가할 부분
 /**** onStartup 이벤트 리스너 ****/
-//chrome.runtime.onStartup.addListener()
+chrome.runtime.onStartup.addListener(async ()=>{
+  const result = await chrome.storage.sync.get(['cache'])
+  const query = createCache(1*1000*60, result.cache)
+  query(updateCache, setCache)
+});
 
+// 필요할 경우 추가할 부분
 /**** onMessage 이벤트 리스너 ****/
 //chrome.runtime.onMessage.addListener(function (message, sender, senderResponse) {});
 
