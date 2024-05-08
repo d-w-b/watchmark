@@ -1,4 +1,3 @@
-console.log('client.js')
 export class YoutubeClient{
   // Request server for youtube video data  
   // @GET { vid } 
@@ -21,15 +20,15 @@ export class YoutubeClient{
   }
 }
 
-export function initCache(staleTime, initialProps = undefined){
+export function initCache( initialProps = undefined, staleTime = 0 ){
   let props;
 
   if(initialProps){
-    const {cacheTimer, staleTime} = initialProps
+    const {cacheTimer} = initialProps
     let now = new Date().getTime()
-    console.log( now, cacheTimer )
+
     // chrome.storage does NOT ALLOW to store function 
-    // ( or method even if it's encapsulated in object )
+    // ( or method even if it's encapsulated in Object )
     // so we need to overwrite {client} when we initiate cache because {client} has methods.
     props = {
       ...initialProps, 
@@ -76,15 +75,6 @@ export async function refreshCache(props){
   }else{
     throw ('CACHE::EXCEPTION::NOT_UPDATED', props);
   }
-}
-
-function checkTimer(props){
-  const {cacheTimer} = props;
-  const now = new Date().getTime();
-  if(cacheTimer <= now){
-    return true
-  }
-  return false
 }
 
 export async function updateTimer(props) {

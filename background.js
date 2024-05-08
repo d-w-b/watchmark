@@ -1,5 +1,4 @@
 import {initCache, refreshCache, setCache}  from "./api/client.js";
-const STALE_DURATION = 0
 /**** onInstalled 이벤트 리스너 ****/
 /*
   크롬 확장프로그램 설치 시에 chrome.storage.sync 초기화
@@ -9,7 +8,7 @@ chrome.runtime.onInstalled.addListener(() => {
     if(!result['mark_youvid']){
       chrome.storage.sync.set({mark_youvid : []})
       .then(()=>{
-        const query = initCache(STALE_DURATION)
+        const query = initCache()
         query(refreshCache, setCache)
       })
     }
@@ -109,7 +108,7 @@ chrome.tabs.onUpdated.addListener(
 chrome.runtime.onStartup.addListener(async ()=>{
   const result = await chrome.storage.sync.get(['cache'])
   console.log(result.cache)
-  const query = initCache(0, result.cache)
+  const query = initCache(result.cache)
   query(refreshCache,setCache)
 });
 
