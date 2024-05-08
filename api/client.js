@@ -64,11 +64,18 @@ export async function refreshCache(props){
     const storage = await chrome.storage.sync.get(['mark_youvid'])
     return client.videos(storage.mark_youvid.toString())
     .then( res => {
-      console.log(res, storage.mark_youvid)
+      const cached = []
+      res.items.map((item)=>{
+        cached.push({
+          thumbnails : item.snippet.thumbnails,
+          title : item.snippet.title
+        })
+      })
+
       return ({
         ...props,
         cacheTimer : parseInt(now) + parseInt(staleTime),
-        cache : [...res.items],
+        cache : [...cached],
         isStaled : false,
       })
     })
