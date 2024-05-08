@@ -1,16 +1,17 @@
-import {createCache, updateCache, setCache}  from "./popupwindow/client.js";
-
+import {initCache, refreshCache, setCache}  from "./api/client.js";
+const STALE_DURATION = 0
 /**** onInstalled 이벤트 리스너 ****/
 /*
   크롬 확장프로그램 설치 시에 chrome.storage.sync 초기화
 */
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.get(['mark_youvid', 'mark_netflix', 'mark_watcha', 'cacheTimer', 'selectedIndex'], function(result){
-    if(!result['cacheTimer']){
-      chrome.storage.sync.set({cacheTimer : new Date().getTime()})
-    }
+  chrome.storage.sync.get(['mark_youvid', 'mark_netflix', 'mark_watcha', 'selectedIndex',], function(result){
     if(!result['mark_youvid']){
       chrome.storage.sync.set({mark_youvid : []})
+      .then(()=>{
+        const query = initCache(STALE_DURATION)
+        query(refreshCache, setCache)
+      })
     }
     if(!result['mark_netflix']){
       chrome.storage.sync.set({mark_netflix : []})
@@ -41,21 +42,31 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
       storageChange.oldValue,
       storageChange.newValue);
 
-    // 변경 사항이 있을 경우 "REFRESH" 메시지 전달하여 데이터 통일성 유지
     if (key.includes('mark')) {
       chrome.tabs.query({}, tabs => {
         tabs.forEach(tab => {
           chrome.tabs.sendMessage(tab.id, 'refresh');
         });
       });
+
+      chrome.storage.sync.get(['cache']).then(storage =>{
+        chrome.storage.sync.set({cache : {...storage.cache, isStaled:true}});
+      })
     }
 
     switch (key) {
+      
       // 사용자 데이터는 https 를 통한 전송만 허용하기 때문에
       // 서버에 데이터를 전송하지 않는 것으로 바꾸면서 삭제한 부분.
-      case "mark_youvid":
-        
-      break
+      // case "mark_youvid":
+      // break
+
+      case 'cache' :
+        if(storageChange.newValue.isStaled){
+          const query = initCache(0, storageChange.newValue)
+          query(refreshCache, setCache)
+        }
+        break;
     }
   }
 });
@@ -95,11 +106,11 @@ chrome.tabs.onUpdated.addListener(
 );
 
 
-/**** onStartup 이벤트 리스너 ****/
 chrome.runtime.onStartup.addListener(async ()=>{
   const result = await chrome.storage.sync.get(['cache'])
-  const query = createCache(1*1000*60, result.cache)
-  query(updateCache, setCache)
+  console.log(result.cache)
+  const query = initCache(0, result.cache)
+  query(refreshCache,setCache)
 });
 
 // 필요할 경우 추가할 부분

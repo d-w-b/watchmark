@@ -1,6 +1,5 @@
 console.log("common.js")
 //contentscripts 에서 공통적으로 쓰이는 함수들 정리
-
 function waitForElement(selector) {
     return new Promise(resolve => {
       if (document.querySelector(selector)) {
@@ -45,21 +44,23 @@ function waitForHref(selector) {
 /*** Youtube Content Storage Add/Delete ***/
 function addYouvidMarked(youvidid){
   chrome.storage.sync.get(['mark_youvid'], result => {
-      mark_youvid = result['mark_youvid']
-      if(mark_youvid === undefined){
-        mark_youvid = []
-      }
-      // & 로 시작하는 문자열 제거 (ie. list)
-      mark_youvid.push(youvidid.replace(/&.+/g, ''))
-      chrome.storage.sync.set({mark_youvid : mark_youvid})
+    const mark_youvid = result['mark_youvid']
+
+    if(mark_youvid === undefined){
+      mark_youvid = []
+    }
+    // 재생 목록은 '&list' 가 문자열 사이에 추가되므로
+    // & 로 시작하는 문자열 제거 (ie. list)
+    mark_youvid.push(youvidid.replace(/&.+/g, ''))
+    chrome.storage.sync.set({mark_youvid})
   })
 }
 
 function deleteYouvidMarked(index){
   chrome.storage.sync.get(['mark_youvid'], result => {
-      mark_youvid = result['mark_youvid']
-      mark_youvid.splice(index,1)
-      chrome.storage.sync.set({mark_youvid : mark_youvid})
+    const mark_youvid = result['mark_youvid']
+    mark_youvid.splice(index,1)
+    chrome.storage.sync.set({mark_youvid})
   })
 }
 

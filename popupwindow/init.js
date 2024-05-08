@@ -1,8 +1,6 @@
-import {YoutubeClient} from "./client.js"
+import {YoutubeClient} from "../api/client.js"
 
 init();
-
-
 
 var state = Object()
 state.temp = undefined
