@@ -62,7 +62,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
       case 'cache' :
         if(storageChange.newValue.isStaled){
-          const query = initCache(0, storageChange.newValue)
+          const query = initCache(storageChange.newValue)
           query(refreshCache, setCache)
         }
         break;
