@@ -191,7 +191,7 @@ a {
 .card h3 {
   display: -webkit-box;
   max-height: 85px;
-  max-width : 187px;
+  width : 187px;
   overflow: hidden;
   color: black;
   -webkit-line-clamp: 4;
@@ -228,7 +228,13 @@ button:hover {
   opacity : 1;
 }
 
+.mark_youtube .btn_delete{
+  margin-left : 1rem;
+}
+
 .btn_delete{
+  border : 1px solid #888;
+  border-radius: 4px;
   width: 16px;
   height: 16px;
 }

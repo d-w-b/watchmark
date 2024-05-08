@@ -1,8 +1,5 @@
 import {initCache, refreshCache, setCache}  from "./api/client.js";
-/**** onInstalled 이벤트 리스너 ****/
-/*
-  크롬 확장프로그램 설치 시에 chrome.storage.sync 초기화
-*/
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.get(['mark_youvid', 'mark_netflix', 'mark_watcha', 'selectedIndex',], function(result){
     if(!result['mark_youvid']){
@@ -26,20 +23,26 @@ chrome.runtime.onInstalled.addListener(() => {
   })
 });
 
-/**** storage.onChanged 이벤트 리스너 ****/
+//@params
 /*
+  changes: {
+    key : {
+      newValue: ...
+      oldValue: ...
+    }
+  }
 
+  namespace : string
 */
 chrome.storage.onChanged.addListener(function (changes, namespace) {
+
   for (var key in changes) {
     var storageChange = changes[key];
 
-    console.log('::: Storage 변경사항 ::: DATA: "%s" , NAMESPACE: "%s" 변경' +
-      '이전 값: "%s", 변경된 값: "%s".',
+    console.log(
       key,
-      namespace,
-      storageChange.oldValue,
-      storageChange.newValue);
+      storageChange.newValue
+    );
 
     if (key.includes('mark')) {
       chrome.tabs.query({}, tabs => {
@@ -54,14 +57,9 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
 
     switch (key) {
-      
-      // 사용자 데이터는 https 를 통한 전송만 허용하기 때문에
-      // 서버에 데이터를 전송하지 않는 것으로 바꾸면서 삭제한 부분.
-      // case "mark_youvid":
-      // break
-
       case 'cache' :
         if(storageChange.newValue.isStaled){
+          // 매 호출마다 initCache()를 해줘야 합니다.
           const query = initCache(storageChange.newValue)
           query(refreshCache, setCache)
         }
@@ -70,16 +68,22 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   }
 });
 
-/**** tabs.onUpdated 이벤트 리스너 ****/
+/*
+  @params
+
+  tabId : number
+  changeInfo : {
+    status : string,
+  }
+  tab:{
+    ...
+    url : string
+  }
+*/
 chrome.tabs.onUpdated.addListener(
   function (tabId, changeInfo, tab) {
     let id = tabId
     let url = new URL(tab.url)
-    // chrome.tabs.query({}, tabs => {
-    //   tabs.forEach(tab => {
-    //     chrome.tabs.sendMessage(tab.id, 'refresh');
-    //   });
-    // });
 
     if (changeInfo.status == "complete" && url.hostname.includes("www.youtube.com")) {
       chrome.scripting.executeScript({
@@ -106,13 +110,10 @@ chrome.tabs.onUpdated.addListener(
 
 
 chrome.runtime.onStartup.addListener(async ()=>{
-  const result = await chrome.storage.sync.get(['cache'])
-  console.log(result.cache)
-  const query = initCache(result.cache)
+  const storage = await chrome.storage.sync.get(['cache'])
+  const query = initCache(storage.cache)
   query(refreshCache,setCache)
 });
 
-// 필요할 경우 추가할 부분
-/**** onMessage 이벤트 리스너 ****/
 //chrome.runtime.onMessage.addListener(function (message, sender, senderResponse) {});
 

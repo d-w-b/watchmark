@@ -3,7 +3,7 @@
     검색 결과 화면 /result
     영상 시청 화면 /watch
 */
-// 초기화
+
 var youtubeContainersList = [];
 var youtubeResultContainersList = [];  
 var youtubeWatchContainersList = [];
@@ -15,8 +15,6 @@ var observerOnWatch = undefined
 //youtubeShortsContainers = []
 //youtubeMixContainers = []
 
-/* Mutation Observer */
-/* Config */
 observerConfig={
     childList : true,
     subtree: true
@@ -31,8 +29,7 @@ observerOnResult = new MutationObserver(youtubeResultMutationHandler);
 mountPointOnResult ? observerOnResult.observe(mountPointOnResult, observerConfig) : console.log('mountPointOnResult Not Found')
 document.querySelectorAll('.btn-mark')?.forEach( element => element.remove() )
 
-// onBrowse Observer
-// mutationObserver 이벤트 핸들러
+
 function youtubeBrowseMutationHandler(mutationList, observer) {
     let u = new URL(window.location.href)
     if(u.pathname.length > 1 || u.host !== "www.youtube.com"){ observer.disconnect() }
@@ -42,9 +39,6 @@ function youtubeBrowseMutationHandler(mutationList, observer) {
     }
 }
 
-
-// onResult Observer
-// mutationObserver 이벤트 핸들러
 function youtubeResultMutationHandler(mutationList, observer) {
     let u = new URL(window.location.href)
     if(u.pathname !== '/results' || u.host !== "www.youtube.com"){ observer.disconnect() }
@@ -54,39 +48,31 @@ function youtubeResultMutationHandler(mutationList, observer) {
     }
 }
 
-
-
 if(window.location.href.includes('watch')){ 
     observerOnResult? observerOnResult.disconnect() : console.log();
     observerOnBrowse? observerOnBrowse.disconnect() : console.log();
     waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(()=>{
         youtubeWatchRecognizeContainer();
-        //youtubeOnWatchRefresh()
     })
     waitForElement('div#columns').then((mountPoint)=>{
         observerOnWatch = new MutationObserver(youtubeBrowseMutationHandler);
         observerOnWatch.observe(mountPoint, observerConfig);
     })
 }
-
-/***********  onBrowse *************/ 
-// 유튜브 영상 찜하기 버튼
+/* @param { HTMLElement } node, { string } vid */
 function youtubeBrowseCreateBtnMark(node, vid){
     const BtnInner = document.createElement("img");
     chrome.storage.sync.get(['mark_youvid'], result => {
         
         mark_youvid = result['mark_youvid']
         if( mark_youvid.includes(vid) ){
-            // 이미 추가된 항목이라면 체크 표시
             BtnInner.src = chrome.runtime.getURL("/images/check.png")
         }else{
-            //아직 추가되지 않은 항목이라면 추가 표시
             BtnInner.src = chrome.runtime.getURL("/images/plus-sign2.png")
         }
 
     })
 
-    // 버튼 스타일링
     BtnInner.style.transition = "all 0.5s"
     BtnInner.style.borderRadius = "18px"
 
@@ -109,8 +95,7 @@ function youtubeBrowseCreateBtnMark(node, vid){
     
 }
 
-/* 버튼 이벤트 핸들러 */
-//btn-mark onClick event
+/* @param { PointerEvent } e */
 function youtubeBrowseOnClickMarkHandler(e){
     console.log( e.target.closest('#details') )
     thumbnail = e.target.closest('#details').querySelector("a#video-title-link")
@@ -119,20 +104,16 @@ function youtubeBrowseOnClickMarkHandler(e){
         vid=vid.replace(/&[^&]*/g, '') 
         mark_youvid = result['mark_youvid']
         if (mark_youvid.includes(vid)){
-            // 이미 추가된 콘텐트라면
             del = mark_youvid.indexOf(vid)
             deleteYouvidMarked(del)
-            //e.target.src = chrome.runtime.getURL("/images/plus-sign2.png")
         }else{
-            // 아직 추가되지 않은 콘텐트라면
             addYouvidMarked(vid)
-            //e.target.src = chrome.runtime.getURL("/images/check.png")
         } 
         youtubeOnBrowseRefresh()
     })
 }
 
-// btn-mark Mouse-Over event
+/* @param { PointerEvent } e */
 function youtubeBrowseOnMouseOverHandler(e){
     thumbnail = e.target.parentNode.parentNode.querySelector("a#video-title-link")
     url = thumbnail?.href
@@ -147,14 +128,12 @@ function youtubeBrowseOnMouseOverHandler(e){
     }
 }
 
-
-// btn-mark Mouse-Out event
+/* @param { PointerEvent } e */
 function youtubeBrowseOnMouseOutHandler(e){
     thumbnail = e.target.parentNode.parentNode.querySelector("a#video-title-link")
     url = thumbnail?.href
     if(url){
         url = url.split('/')
-        // 쇼츠를 제외한 영상만 처리
         if(!url.includes("shorts") && url[3]){
             vid = url[3].split('=')[1]
             youtubeOnBrowseRefresh()
@@ -163,29 +142,20 @@ function youtubeBrowseOnMouseOutHandler(e){
     }
 }
 
-
-/* 컨테이너 DOM Recognition */
+// void --> void
 function youtubeBrowseRecognizeContainers() {
-    console.log("onBrowseRecognizeContainers")
-    cards = document.querySelectorAll('div#content.style-scope.ytd-rich-item-renderer');
-    //각 container 별로 '+' 버튼 추가 및 배열에 저장
+    const cards = document.querySelectorAll('div#content.style-scope.ytd-rich-item-renderer');
     for (c of cards){
         if (!youtubeContainersList.includes(c)){
             youtubeContainersList.push(c)
-            thumbnail = c.querySelector('a#thumbnail')
+            const thumbnail = c.querySelector('a#thumbnail')
 
-            url = thumbnail?.href
-
-            // 채널 이름 가져오기
-            if(c.querySelector('a#avatar-link')?.href.includes('@')){
-                channelName = c.querySelector('a#avatar-link')?.href.split('@')[1]
-            }else{
-                channelName = c.querySelector('a#avatar-link')?.href.split('/')[4]
-            }
-
-            if(url && channelName ){  
+            let url = thumbnail?.href
+            const isSponsored = c.querySelector('div#thumbnail-container')?.getAttribute('aria-label').includes('광고')
+            if(url && !isSponsored){  
                 url = url.split('/')
-                // 쇼츠를 제외한 영상만 처리, 쇼츠 영상 url 에는 "shorts" 가 포함됩니다.
+                // 쇼츠를 제외한 영상만 처리
+                // 쇼츠 영상 url 에는 "shorts" 가 포함됩니다.
                 if(!url.includes("shorts") && url[3]){
                     vid = url[3].split('=')[1]
                     vid=vid.replace(/&[^&]*/g, '')
@@ -193,33 +163,23 @@ function youtubeBrowseRecognizeContainers() {
                     youtubeContainersList.push(c)
                 }
             }else{  // 유튜브 광고, 쇼츠, 믹스, 설문조사 등...
-                // 추후에 광고, 쇼츠, 믹스 ,설문조사 에 대한 처리가 필요하면 코드 작성할 부분.
+                // 추후에 광고, 쇼츠, 믹스 ,설문조사 에 대한 처리가 필요하면 작성할 부분.
 
             }
         }
     }
 }
 
-
-// Refresh UI when Model has changed.
+// void --> void
 function youtubeOnBrowseRefresh(){
-    console.log("onBrowseRefresh")
-    // REFRESH
     chrome.storage.sync.get(['mark_channel_name', 'mark_youvid'], result => {
         mark_channel_name = result["mark_channel_name"]
         mark_youvid = result['mark_youvid']
 
-        // refresh cards in Containers List 
         for(c of youtubeContainersList){
-
-            if(c.querySelector('a#avatar-link')?.href.includes('@')){
-                channelName = c.querySelector('a#avatar-link')?.href.split('@')[1]
-            }else{
-                channelName = c.querySelector('a#avatar-link')?.href.split('/')[4]
-            }
             url = c.querySelector('a#thumbnail')?.href
-
-            if( url && !url.includes('shorts') ){
+            const isSponsored = c.querySelector('div#thumbnail-container')?.getAttribute('aria-label').includes('광고')
+            if( url && !url.includes('shorts') && !isSponsored ){
                 vid = url.split('/')[3].split('=')[1]
                 vid = vid.replace(/&[^&]*/g, '')
                 title = (c.querySelector("a#avatar-link")?.title === "undefined")
@@ -244,25 +204,19 @@ function youtubeOnBrowseRefresh(){
     })
 }
 
-
-/***********  onResult *************/ 
-// 유튜브 영상 찜하기 버튼 생성
+/* @param { HTMLElement } node, { string } vid */
 function youtubeResultCreateBtnMarkElement(node, vid){
     const BtnInner = document.createElement("img");
     chrome.storage.sync.get(['mark_youvid'], result => {
 
         mark_youvid = result['mark_youvid']
         if( mark_youvid.includes(vid) ){
-            // 이미 추가된 항목이라면 체크 표시
             BtnInner.src = chrome.runtime.getURL("/images/check.png")
         }else{
-            //아직 추가되지 않은 항목이라면 추가 표시
             BtnInner.src = chrome.runtime.getURL("/images/plus-sign2.png")
         }
     })
 
-    // define style
-    // Object.assign(node.style, obj) 로 변경할 여지가 있음
     BtnInner.style.transition = "all 0.5s"
     BtnInner.style.borderRadius = "18px"
 
@@ -284,14 +238,11 @@ function youtubeResultCreateBtnMarkElement(node, vid){
     node.appendChild(BtnMark)
 }
 
-/* 버튼 이벤트 핸들러 */
-
-//btn-mark onClick event
+/* @param { PointerEvent } e */
 function youtubeResultOnClickMarkHandler(e){
     thumbnail = e.target.closest('#dismissible').querySelector("a#thumbnail")
     url = thumbnail?.href
     if(url){
-        // 쇼츠를 제외한 영상만 처리
         if(!url.includes("shorts")){
             vid = url.split('/')[3].split('=')[1].slice(0,-3)
         }
@@ -300,32 +251,26 @@ function youtubeResultOnClickMarkHandler(e){
         mark_youvid = result['mark_youvid']
 
         if (mark_youvid.includes(vid)){
-            // 이미 추가된 콘텐트라면
             idx = mark_youvid.indexOf(vid)
             deleteYouvidMarked(idx)
             e.target.src = chrome.runtime.getURL("/images/plus-sign2.png")
         }else{
-            // 아직 추가되지 않은 콘텐트라면
             addYouvidMarked(vid)
             e.target.src = chrome.runtime.getURL("/images/check.png")
         } 
     })
 }
 
-
-// btn-mark Mouse-Over event
+/* @param { PointerEvent } e */
 function youtubeResultOnMouseOverHandler(e){
     e.target.style.boxShadow = "0 0 0 4px #a7a7a7 inset"
 }
-
-
-// btn-mark Mouse-Out event
+/* @param { PointerEvent } e */
 function youtubeResultOnMouseOutHandler(e){
     e.target.style.boxShadow = "none"
 }
 
-
-/* 컨테이너 DOM Recognition */
+// void --> void
 function youtubeResultRecognizeContainers() {
     cards = document.querySelectorAll('div#dismissible.style-scope.ytd-video-renderer');
     // 각 container 별로 버튼 추가 및 배열에 저장
@@ -347,11 +292,8 @@ function youtubeResultRecognizeContainers() {
         }
     }
 }
-
-// Refresh UI When Model has changed.
+// void --> void
 function youtubeOnResultRefresh(){
-    //onResult 화면의 카드의 알림 버튼 업데이트
-    //url 에 /result 가 포함되어있는지 확인 후 refresh
     if(!window.location.href.includes('/result')){
         chrome.storage.sync.get(['mark_youvid'], result => {
             mark_youvid = result['mark_youvid']
@@ -376,9 +318,7 @@ function youtubeOnResultRefresh(){
     }
 }
 
-/***********  onWatch *************/ 
-
-// btn-mark onClick event
+/* @param { PointerEvent } e */
 function youtubeWatchOnClickMarkHandler(e){
     vid = window.location.href.split('=')[1]
     chrome.storage.sync.get(['mark_youvid'], result => {
@@ -397,19 +337,19 @@ function youtubeWatchOnClickMarkHandler(e){
     })
 }
 
-// btn-mark Mouse-Over event
+/* @param { PointerEvent } e */
 function youtubeWatchOnMouseOverHandler(e){
     e.target.style.boxShadow = "0 0 0 4px #a7a7a7 inset"
 }
 
 
-// btn-mark Mouse-Out event
+/* @param { PointerEvent } e */
 function youtubeWatchOnMouseOutHandler(e){
     e.target.style.boxShadow = "none"
 }
 
 
-// Refresh UI when Model has changed.
+// void --> void
 function youtubeOnWatchRefresh(){
     console.log('onWatchRefresh')
     // url 에 /watch 가 포함되었는지 확인 후 refresh
@@ -436,7 +376,7 @@ function youtubeOnWatchRefresh(){
     }
 }
 
-
+// void --> void
 function youtubeWatchRecognizeContainer(){
     container = document.body.querySelector('div#owner.item.style-scope.ytd-watch-metadata')
     waitForElement('a.yt-simple-endpoint.style-scope.ytd-video-owner-renderer').then(( element )=>{
@@ -466,8 +406,6 @@ function youtubeWatchRecognizeContainer(){
                 }
             })
         
-            // define style
-            // Object.assign(node.style, obj) 로 변경할 여지가 있음
             BtnMarkInner.style.transition = "all 0.5s"
             BtnMarkInner.style.borderRadius = "18px"
         
@@ -492,16 +430,14 @@ function youtubeWatchRecognizeContainer(){
     })
 }
 
-
-// Listener for Checking if Model has changed.
+// 본래 api 에서는 { any } 타입으로 msg 를 보낼 수 있지만,
+// string 만 사용함
+// @param { string } msg
 chrome.runtime.onMessage.addListener(msg => {
-
     if(msg === "refresh"){
-        console.log('refresh')
         youtubeOnBrowseRefresh()
         youtubeOnResultRefresh()
         youtubeOnWatchRefresh()
     }
-
 });
 

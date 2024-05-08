@@ -1,5 +1,4 @@
-console.log("common.js")
-//contentscripts 에서 공통적으로 쓰이는 함수들 정리
+//@param {string} selector
 function waitForElement(selector) {
     return new Promise(resolve => {
       if (document.querySelector(selector)) {
@@ -20,6 +19,7 @@ function waitForElement(selector) {
     });
 }
 
+//@param {string} selector
 function waitForHref(selector) {
     return new Promise(resolve => {
       if (document.querySelector(selector).href) {
@@ -40,8 +40,7 @@ function waitForHref(selector) {
     });
 }
 
-
-/*** Youtube Content Storage Add/Delete ***/
+//@param {string} youvidid
 function addYouvidMarked(youvidid){
   chrome.storage.sync.get(['mark_youvid'], result => {
     const mark_youvid = result['mark_youvid']
@@ -56,6 +55,7 @@ function addYouvidMarked(youvidid){
   })
 }
 
+//@param {number} index
 function deleteYouvidMarked(index){
   chrome.storage.sync.get(['mark_youvid'], result => {
     const mark_youvid = result['mark_youvid']
@@ -64,8 +64,8 @@ function deleteYouvidMarked(index){
   })
 }
 
+//@param {string} id, imgUrl, title, watchUrl
 function addWatchaMarked(id, imgUrl, title, watchUrl){
-
   content = {
     'imgUrl' : imgUrl,
     'title' : title,
@@ -94,6 +94,7 @@ function addWatchaMarked(id, imgUrl, title, watchUrl){
   })
 }
 
+//@param {number} index
 function deleteWatchaMarked(index){
   console.log(index)
   chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], result => {
@@ -110,7 +111,7 @@ function deleteWatchaMarked(index){
   })
 }
 
-
+//@param {string} id, imgUrl, title, watchUrl
 function addNetflixMarked(id, imgUrl, title, watchUrl){
   content = {
     'imgUrl' : imgUrl,
@@ -139,6 +140,7 @@ function addNetflixMarked(id, imgUrl, title, watchUrl){
   })
 }
 
+//@param {number} index
 function deleteNetflixMarked(id){
   chrome.storage.sync.get(['mark_netflix'], result => {
       mark_netflix = result['mark_netflix']

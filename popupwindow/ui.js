@@ -1,4 +1,3 @@
-// ui.js defines components for rendering popup.html
 var state = Object()
 state.temp = undefined
 state.items = []
@@ -50,7 +49,7 @@ function createButton(img, eventHandler, className){
 
   return btn
 }
-/******************************** 사용자 정의 컴포넌트 *********************************/
+
 function createCheckBox(){
   img = createImg('images/check_box_black.png', '선택 버튼','btn_check_img')
 
@@ -137,13 +136,14 @@ function createWatchaCard(
   return card
 }
 
-/******************************  클릭 이벤트 핸들러   ******************************/
+/* @param { PointerEvent } e */
 function onClickCard(e){
   chrome.tabs.create(
     {url: e.target.closest('a').href}
   );
 }
 
+/* @param { PointerEvent } e */
 function onClickDelete(e){
   chrome.storage.sync.get(['mark_youvid'], function(result){
     parentNode = e.target.closest('.card')
@@ -166,6 +166,7 @@ function onClickDelete(e){
   })
 }
 
+/* @param { PointerEvent } e */
 function onClickDeleteWatcha(e){
 
   chrome.storage.sync.get(['mark_watcha', 'mark_watcha_data'], function(result){
@@ -191,6 +192,7 @@ function onClickDeleteWatcha(e){
   })
 }
 
+/* @param { PointerEvent } e */
 function onClickSwap(e){
   console.log(state.temp)
   getStorage(['mark_youvid']).then(result=>{
