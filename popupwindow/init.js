@@ -57,7 +57,7 @@ function renderYoutubeItems(container, items, numColumn) {
                       createImg(thumbnail.url, title, "thumbnail"),                                     
                       createAnchor("https://www.youtube.com/watch?v=" + item.vid, null, onClickCard),
                       title, 
-                      item.id                                                                       
+                      item.vid                                                                       
                     )
 
     row.appendChild(card)
