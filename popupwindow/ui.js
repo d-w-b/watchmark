@@ -76,7 +76,7 @@ function createSwapButton(){
 }
 
 function createDeleteButton( eventHandler ){
-  img = createImg('images/delete_black.png', '삭제 버튼', 'btn_delete_img')
+  img = createImg('images/trashcan.png', '삭제 버튼', 'btn_delete_img')
 
   btnDelete = createButton(
     img,

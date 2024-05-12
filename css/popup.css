@@ -173,6 +173,7 @@ a {
 
 .arrange {
   display:flex;
+  align-items: center;
 }
 
 .btn_check_img {
@@ -234,10 +235,11 @@ button:hover {
 }
 
 .btn_delete{
-  border : 1px solid #888;
-  border-radius: 4px;
+  border-radius: 20px;
   width: 16px;
   height: 16px;
+  opacity: 0.7;
+  transition: all 0.3s;
 }
 .btn_delete > img{
   width: 100%;

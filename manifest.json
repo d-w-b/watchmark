@@ -1,7 +1,7 @@
 {
   "name": "watchmark",
-  "description": "테스트",
-  "version": "0.4",
+  "description": "관심 컨텐츠 관리 확장 프로그램",
+  "version": "0.9",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js",
@@ -30,7 +30,7 @@
   ],
   "minimum_chrome_version": "116",
   "web_accessible_resources": [{ 
-    "resources": ["/images/plus-sign.png","/images/plus-sign2.png","/images/check.png","/images/checkmark.png", "/images/notifications.png","/images/notifications_mouse_over.png","/images/notifications_cancel.png","/images/notifications_cancel_mouse_over.png"],
+    "resources": ["/images/plus-sign.png","/images/plus-sign2.png","/images/check.png","/images/checkmark.png"],
     "matches": ["<all_urls>"]
   }]
 }

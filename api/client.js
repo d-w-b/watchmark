@@ -1,6 +1,6 @@
 export class YoutubeClient{
   // Request server for youtube video data  
-  // @GET { vid } 
+  // @GET param: { id } 
   // return  res : {... , Array<Object> items}
   constructor() {
     this.urlWithParam = 'http://43.201.187.250:8000/id='
@@ -59,7 +59,7 @@ export function initCache( initialProps = undefined, staleTime = 5* 60 * 1000 ){
       return props
     })
     .then(props => cb(props))
-    .catch(e => console.log('CACHE::EXCEPTION::NOT_STALED_YET',e))
+    .catch(props => console.log('CACHE::EXCEPTION::NOT_STALED_YET',props))
   }
 }
 
