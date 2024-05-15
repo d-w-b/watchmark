@@ -21,7 +21,7 @@ export class YoutubeClient{
 }
 
 /*
-  @params
+  @param
   props : {
     client : YoutubeClient
     staleTime : number
@@ -36,7 +36,8 @@ export function initCache( initialProps = undefined, staleTime = 5* 60 * 1000 ){
   if(initialProps){
     // chrome.storage does NOT ALLOW to store function 
     // ( or method even if it's encapsulated in Object )
-    // so we need to overwrite {client} when we initiate cache because {client} has methods.
+    // so we need to overwrite {client} 
+    // when we initiate cache because {client} has methods.
     props = {
       ...initialProps, 
       client: new YoutubeClient(), 
@@ -55,10 +56,8 @@ export function initCache( initialProps = undefined, staleTime = 5* 60 * 1000 ){
   return (action, cb) => {
     action(props)
     .then((resolved)=>{
-      props = {...resolved}
-      return props
+      return cb(...resolved)
     })
-    .then(props => cb(props))
     .catch(props => console.log('CACHE::EXCEPTION::NOT_STALED_YET',props))
   }
 }

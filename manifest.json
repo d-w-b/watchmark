@@ -1,6 +1,6 @@
 {
   "name": "watchmark",
-  "description": "관심 컨텐츠 관리 확장 프로그램",
+  "description": "찜한 OTT 콘텐츠를 한 곳에서 관리할 수 있습니다.",
   "version": "0.9",
   "manifest_version": 3,
   "background": {
