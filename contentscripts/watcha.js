@@ -25,7 +25,10 @@ waitForElement('section.e1kgye4v2').then( container => {
     watchaContentsCreateBtnMark(container, ottid)
 })
 
-/* @param { HTMLElement } pnode, { string } ottid */
+/* 
+@param { HTMLElement } pnode, 
+@param { string } ottid 
+*/
 function watchaBrowseCreateBtnMarkElement(pNode,ottid){
     const BtnInner = document.createElement("img");
     chrome.storage.sync.get(['mark_watcha'], result => {
@@ -146,7 +149,10 @@ function watchaOnBrowseRefresh(){
     })
 }
 
-/* @param { HTMLElement } pnode, { string } ottid */
+/* 
+@param { HTMLElement } pnode, 
+@param { string } ottid 
+*/
 function watchaContentsCreateBtnMark(pNode,ottid){
     const BtnInner = document.createElement("img");
     chrome.storage.sync.get(['mark_watcha'], result => {

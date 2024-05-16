@@ -18,7 +18,10 @@ netflixObserver = new MutationObserver(onBrowseMutationHandler);
 netflixObserver.observe(netflixAppMountPoint, observerConfig)
 
 
-/* @param { HTMLElement } pNode, { string } ottid */
+/* 
+@param { HTMLElement } pNode, 
+@param { string } ottid 
+*/
 function netflixCreateBtnMark(pNode,ottid){
     const BtnInner = document.createElement("img");
     chrome.storage.local.get(['mark_netflix'], result => {
@@ -101,6 +104,7 @@ function netflixBrowseOnMouseOutHandler(e){
     })
 }
 
+//void --> void
 function recognizeContainers() {
     card_containers = document.getElementsByClassName('title-card-container ltr-0');
     for (c of card_containers){
@@ -115,7 +119,7 @@ function recognizeContainers() {
         }
     }
 }
-
+//void --> void
 function netflixOnBrowseRefresh(){
     chrome.storage.local.get(['mark_netflix'], result => {
         mark_netflix = result['mark_netflix']

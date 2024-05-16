@@ -59,7 +59,10 @@ if(window.location.href.includes('watch')){
         observerOnWatch.observe(mountPoint, observerConfig);
     })
 }
-/* @param { HTMLElement } node, { string } vid */
+/* 
+@param { HTMLElement } node, 
+@param { string } vid 
+*/
 function youtubeBrowseCreateBtnMark(node, vid){
     const BtnInner = document.createElement("img");
     chrome.storage.sync.get(['mark_youvid'], result => {
@@ -204,7 +207,10 @@ function youtubeOnBrowseRefresh(){
     })
 }
 
-/* @param { HTMLElement } node, { string } vid */
+/* 
+@param { HTMLElement } node, 
+@param { string } vid 
+*/
 function youtubeResultCreateBtnMarkElement(node, vid){
     const BtnInner = document.createElement("img");
     chrome.storage.sync.get(['mark_youvid'], result => {
@@ -325,12 +331,10 @@ function youtubeWatchOnClickMarkHandler(e){
         vid=vid.replace(/&[^&]*/g, '')
         mark_youvid = result['mark_youvid']
         if (mark_youvid.includes(vid)){
-            // 이미 추가된 콘텐트라면
             del = mark_youvid.indexOf(vid)
             deleteYouvidMarked(del)
             e.target.src = chrome.runtime.getURL("/images/plus-sign2.png")
         }else{
-            // 아직 추가되지 않은 콘텐트라면
             addYouvidMarked(vid)
             e.target.src = chrome.runtime.getURL("/images/check.png")
         } 

@@ -39,7 +39,11 @@ function btntabClickEventHandler(e) {
   renderTab(index ); // 해당 탭으로 이동
 }
 
-/* @param { DOM Node } container, { Array<YoutubeVideoData> } items, { int } numColumn */
+/*
+  @param { DOM Node } container, 
+  @param { Array<YoutubeVideoData> } items, 
+  @param { int } numColumn 
+*/
 function renderYoutubeItems(container, items, numColumn) {
   let count = 0
   for (let item of items){
@@ -68,7 +72,11 @@ function renderYoutubeItems(container, items, numColumn) {
   return container
 }
 
-/* @param { HTMLElement } container, { Array<ContentsContainer> } items, { int } numColumn */
+/* 
+@param { HTMLElement } container, 
+@param { Array<ContentsContainer> } items, 
+@param { int } numColumn 
+*/
 function renderItems(container, items, numColumn) {
   let count = 0
   for (let item of items){
