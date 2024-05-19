@@ -17,7 +17,7 @@ function init() {
       const containerLists = document.querySelectorAll('li.contents_container')
       containerLists[result['selectedIndex']].style.display = "block"
       const youtubeVideoContainer = document.body.querySelector('.mark_youtube')
-      renderYoutubeItems( youtubeVideoContainer , result.cache.items, 1 )
+      renderYoutubeItems( youtubeVideoContainer , result['cache'], 1 )
       
       const mark_netflix_data = result['mark_netflix_data']
       const netflixVideoContainer = document.body.querySelector('.mark_netflix')

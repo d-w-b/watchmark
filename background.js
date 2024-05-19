@@ -1,13 +1,9 @@
-import {initCache, refreshCache, setCache}  from "./api/client.js";
+import {updateCache}  from "./api/client.js";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.get(['mark_youvid', 'mark_netflix', 'mark_watcha', 'selectedIndex',], function(result){
     if(!result['mark_youvid']){
       chrome.storage.sync.set({mark_youvid : []})
-      .then(()=>{
-        const query = initCache()
-        query(refreshCache, setCache)
-      })
     }
     if(!result['mark_netflix']){
       chrome.storage.sync.set({mark_netflix : []})
@@ -19,6 +15,9 @@ chrome.runtime.onInstalled.addListener(() => {
     }
     if(!result['selectedIndex']){
       chrome.storage.sync.set({selectedIndex : 0})
+    }
+    if(!result['cache']){
+      chrome.storage.sync.set({cache : []})
     }
   })
 });
@@ -51,19 +50,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
         });
       });
 
-      chrome.storage.sync.get(['cache']).then(storage =>{
-        chrome.storage.sync.set({cache : {...storage.cache, isStaled:true}});
-      })
-    }
-
-    switch (key) {
-      case 'cache' :
-        if(storageChange.newValue.isStaled){
-          // 매 호출마다 initCache()를 해줘야 합니다.
-          const query = initCache(storageChange.newValue)
-          query(refreshCache, setCache)
-        }
-        break;
+      updateCache();
     }
   }
 });
@@ -110,9 +97,7 @@ chrome.tabs.onUpdated.addListener(
 
 
 chrome.runtime.onStartup.addListener(async ()=>{
-  const storage = await chrome.storage.sync.get(['cache'])
-  const query = initCache(storage.cache)
-  query(refreshCache,setCache)
+  updateCache()
 });
 
 //chrome.runtime.onMessage.addListener(function (message, sender, senderResponse) {});
