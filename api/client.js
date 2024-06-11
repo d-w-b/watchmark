@@ -4,7 +4,7 @@ export class YoutubeClient{
   // @GET param: { id } 
   // return  res : {... , Array<Object> items}
   constructor() {
-    this.urlWithParam = 'http://43.201.187.250:8000/id='
+    this.urlWithParam = 'http://54.253.190.46:8000/id='
   }
   
   async videos(vids){
